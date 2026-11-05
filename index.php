@@ -293,9 +293,6 @@ if(isset($_SESSION[$systemname."errormsg"])) {
 			case "subby":
             include "subby_lec.php";
             break;
-			case "mypayments":
-            include "payments_stu.php";
-            break;
 			case "addrecord":
             include "addpayment.php";
             break;
@@ -376,9 +373,6 @@ if(isset($_SESSION[$systemname."errormsg"])) {
             include "delete_course.php";
             break;
           
-    case "editor":
-            include "editor.php";
-            break;
             
 			case "open_course":
             include "curr_course.php";
@@ -404,9 +398,6 @@ if(isset($_SESSION[$systemname."errormsg"])) {
             break;
 			case "view_instructors":
             include "users_lecturers.php";
-            break;
-             case "my_assignments":
-            include "instructor_assignments.php";
             break;
               case "add_announcement":
             include "add_announcement.php";
@@ -444,9 +435,6 @@ if(isset($_SESSION[$systemname."errormsg"])) {
             include "edit_admin.php";
             break;
             
-             case "edit_assignment":
-            include "edit_assignment.php";
-            break;
             
              case "all_assignments":
             include "all_assignments.php";
@@ -505,9 +493,6 @@ if(isset($_SESSION[$systemname."errormsg"])) {
             break;
 			case "create_chatroom":
             include "create_chatroom.php";
-            break;
-              	case "editor":
-            include "editor.php";
             break;
 		case "study_plan":
             include "study_plan.php";

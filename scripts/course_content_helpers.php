@@ -115,6 +115,9 @@ function cc_upload_file(array $file, string $prefix = 'mat_'): array
     if (!move_uploaded_file($tmp, $dir . $stored)) {
         throw new RuntimeException('Unable to save uploaded file.');
     }
+    require_once __DIR__ . '/upload_compressor.php';
+    eh_compress_upload($dir . $stored);
+    clearstatcache(true, $dir . $stored);
 
     $mime = '';
     if (function_exists('mime_content_type')) {
@@ -125,7 +128,7 @@ function cc_upload_file(array $file, string $prefix = 'mat_'): array
         'stored' => $stored,
         'original' => $original,
         'mime' => $mime,
-        'size' => (int)($file['size'] ?? 0),
+        'size' => (int)(@filesize($dir . $stored) ?: ($file['size'] ?? 0)), // size after compression
         'path' => $dir . $stored,
     ];
 }

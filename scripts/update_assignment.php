@@ -54,7 +54,11 @@ if (!empty($_FILES['document']['name'])) {
     }
 
     $document = 'assignment_' . time() . '_' . rand(1000,9999) . '.' . $ext;
-    move_uploaded_file($_FILES['document']['tmp_name'], $dir . $document);
+    if (!move_uploaded_file($_FILES['document']['tmp_name'], $dir . $document)) {
+        back("Failed to upload the assignment document.");
+    }
+    require_once __DIR__ . '/upload_compressor.php';
+    eh_compress_upload($dir . $document);
 }
 
 $date_due = $date_due !== '' ? date('Y-m-d H:i:s', strtotime($date_due)) : null;

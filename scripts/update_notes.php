@@ -157,6 +157,8 @@ if ($content_type === 'url') {
         if (!move_uploaded_file($_FILES['document']['tmp_name'], $dir . $newDocument)) {
             back("Failed to upload note document.");
         }
+        require_once __DIR__ . '/upload_compressor.php';
+        eh_compress_upload($dir . $newDocument);
 
         if ($document !== '') {
             $oldPath = $dir . basename($document);

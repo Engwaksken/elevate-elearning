@@ -62,12 +62,21 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     if (!empty($_FILES['post_image']['name']) && $_FILES['post_image']['error'] === 0) {
         $target_dir = "announcements/";
         if (!is_dir($target_dir)) mkdir($target_dir, 0777, true);
-        $target_file = $target_dir . basename($_FILES['post_image']['name']);
+        require_once __DIR__ . '/scripts/upload_compressor.php';
+        // Images only, stored under a random name (previously any file type was accepted).
+        if (!eh_upload_extension_allowed((string)$_FILES['post_image']['name'], ['jpg', 'jpeg', 'png', 'gif', 'webp'])
+            || !@getimagesize($_FILES['post_image']['tmp_name'])) {
+            $_SESSION['errormsg'] = "Only image files (JPG, PNG, GIF or WebP) can be uploaded.";
+            header("Location: index.php?view=my_announcements");
+            exit();
+        }
+        $target_file = $target_dir . eh_random_upload_name((string)$_FILES['post_image']['name'], 'ann_');
         if (!move_uploaded_file($_FILES['post_image']['tmp_name'], $target_file)) {
             $_SESSION['errormsg'] = "Error uploading file.";
             header("Location: index.php?view=my_announcements");
             exit();
         }
+        eh_compress_upload($target_file);
     }
 
     if ($announcement_id) {

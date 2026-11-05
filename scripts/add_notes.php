@@ -207,6 +207,8 @@ function uploadNoteFile(string $link, int $filetype): array
     if (!move_uploaded_file($tmpName, $destination)) {
         redirectWithMessage($link, 'errormsg', 'File upload failed.');
     }
+    require_once __DIR__ . '/upload_compressor.php';
+    eh_compress_upload($destination);
 
     return [$document, $filetype];
 }

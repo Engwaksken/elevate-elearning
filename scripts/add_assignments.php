@@ -600,6 +600,8 @@ if ($content_type === 'url') {
     if (!move_uploaded_file($tmpName, $destination)) {
         redirectWithMessage($link, 'errormsg', $title . ' assignment upload failed.');
     }
+    require_once __DIR__ . '/upload_compressor.php';
+    eh_compress_upload($destination);
 }
 
 /*

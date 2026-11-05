@@ -374,6 +374,8 @@ try {
         )) {
             respond(false, 'Unable to save the uploaded assignment file.', [], 500);
         }
+        require_once __DIR__ . '/upload_compressor.php';
+        eh_compress_upload($destination);
     }
 
     /*

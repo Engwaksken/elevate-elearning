@@ -104,8 +104,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_POST['edit_id'])) {
             $errors[] = "Image must be under 5 MB.";
         else {
             $fname = uniqid('course_img_', true) . '.' . $ext;
-            if (move_uploaded_file($_FILES['course_image']['tmp_name'], $image_dir . $fname))
+            if (move_uploaded_file($_FILES['course_image']['tmp_name'], $image_dir . $fname)) {
                 $course_image = $image_dir . $fname;
+                require_once __DIR__ . '/scripts/upload_compressor.php';
+                eh_compress_upload($course_image);
+            }
             else
                 $errors[] = "Failed to upload image.";
         }
@@ -125,8 +128,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_POST['edit_id'])) {
                 $errors[] = "File must be under 20 MB.";
             else {
                 $fname = uniqid('course_file_', true) . '.' . $ext;
-                if (move_uploaded_file($_FILES['course_file']['tmp_name'], $file_dir . $fname))
+                if (move_uploaded_file($_FILES['course_file']['tmp_name'], $file_dir . $fname)) {
                     $course_link = $file_dir . $fname;
+                    require_once __DIR__ . '/scripts/upload_compressor.php';
+                    eh_compress_upload($course_link);
+                }
                 else
                     $errors[] = "Failed to upload file.";
             }

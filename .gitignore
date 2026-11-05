@@ -1,3 +1,6 @@
+# --- Upload maintenance output (reports, backups, quarantine) ----------
+_maintenance/
+
 # --- Secrets -------------------------------------------------------------
 scripts/config.local.php
 .env

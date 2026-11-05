@@ -43,6 +43,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             
             if (move_uploaded_file($image_tmp, $image_target)) {
                 $course_image = $image_target;
+                require_once __DIR__ . '/scripts/upload_compressor.php';
+                eh_compress_upload($image_target);
             } else {
                 $uploadErrors[] = "Failed to upload image";
             }
@@ -76,6 +78,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 
                 if (move_uploaded_file($file_tmp, $file_target)) {
                     $course_link = $file_target; 
+                    require_once __DIR__ . '/scripts/upload_compressor.php';
+                    eh_compress_upload($file_target);
                 } else {
                     $uploadErrors[] = "Failed to upload file";
                 }
