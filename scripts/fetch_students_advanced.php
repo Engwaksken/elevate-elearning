@@ -2,6 +2,19 @@
 require 'connector.php';
 header('Content-Type: application/json; charset=utf-8');
 
+// Student list contains personal data: staff who can open the Students page only.
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+if (
+    (string)($_SESSION[$systemname . 'leido'] ?? '') === ''
+    || !in_array((string)($_SESSION[$systemname . 'letype'] ?? ''), ['sabrtw', 'xybrtw', 'xtfbry'], true)
+) {
+    http_response_code(403);
+    echo json_encode(['error' => 'Not authorised.']);
+    exit;
+}
+
 
 $DEBUG = true;
 
@@ -68,12 +81,11 @@ if ($classType !== null) {
     $types .= "i";
 }
 
-// account status (matches the Active/Inactive label shown in the list)
-if ($status === 'active') {
-    $where[] = "u.verified IN ('yes','Active')";
-} elseif ($status === 'inactive') {
-    $where[] = "(u.verified IS NULL OR u.verified NOT IN ('yes','Active'))";
-}
+// account status (matches the Active/Inactive label shown in the list).
+// Kept separate so the statistics cards can ignore it (they show both counts).
+$activeSql   = "u.verified IN ('yes','Active')";
+$inactiveSql = "(u.verified IS NULL OR u.verified NOT IN ('yes','Active'))";
+$statusCond  = $status === 'active' ? $activeSql : ($status === 'inactive' ? $inactiveSql : '');
 
 // dates
 if ($date_from !== null) {
@@ -128,7 +140,40 @@ if ($course !== null || $intake !== null) {
     )";
 }
 
-$where_sql = implode(" AND ", $where);
+$where_sql_no_status = implode(" AND ", $where);
+$where_sql = $statusCond !== '' ? $where_sql_no_status . " AND " . $statusCond : $where_sql_no_status;
+
+/* ----------------------- STATISTICS (same filters, any status) ----------------------- */
+$stats = null;
+if (!$isExport) {
+    $stats_sql = "
+        SELECT
+            COUNT(*) AS total,
+            COALESCE(SUM($activeSql), 0)   AS active,
+            COALESCE(SUM($inactiveSql), 0) AS inactive,
+            COALESCE(SUM(u.date_created >= ?), 0) AS new_30d
+        FROM users u
+        WHERE $where_sql_no_status
+    ";
+    $stats_stmt = $conn->prepare($stats_sql);
+    if ($stats_stmt) {
+        $stats_params = array_merge([date('Y-m-d 00:00:00', strtotime('-29 days'))], $params);
+        $stats_types  = 's' . $types;
+        $refsS = [];
+        foreach ($stats_params as $k => $v) $refsS[$k] = &$stats_params[$k];
+        $stats_stmt->bind_param($stats_types, ...$refsS);
+        if ($stats_stmt->execute()) {
+            $s = $stats_stmt->get_result()->fetch_assoc() ?: [];
+            $stats = [
+                'total'    => (int)($s['total'] ?? 0),
+                'active'   => (int)($s['active'] ?? 0),
+                'inactive' => (int)($s['inactive'] ?? 0),
+                'new_30d'  => (int)($s['new_30d'] ?? 0),
+            ];
+        }
+        $stats_stmt->close();
+    }
+}
 
 /* ----------------------- ORDER ----------------------- */
 switch ($order) {
@@ -379,6 +424,7 @@ $stmt->close();
 echo json_encode([
     "students"     => $students,
     "totalEntries" => $totalEntries,
+    "stats"        => $stats,
     "currentPage"  => $page,
     "limit"        => $limit,
     "isExport"     => $isExport ? 1 : 0,

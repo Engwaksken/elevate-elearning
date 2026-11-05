@@ -56,6 +56,15 @@ function pagUrl(int $p): string
     return h($_SERVER['PHP_SELF'] . '?' . http_build_query($q));
 }
 
+/*
+ * Performance: the login log grows with every sign-in, so this page
+ *  - shows the last 30 days unless another range or dates are chosen,
+ *  - counts and summarises in ONE pass over login_logs only (no joins),
+ *  - picks the 15 rows for the page first and only then looks up names and
+ *    courses for those rows,
+ *  - filters dates on the raw column so an index on login_time can be used
+ *    (run scripts/cli/add_login_log_indexes.php once to create the indexes).
+ */
 $records_per_page = 15;
 $page = max(1, (int)($_GET['page'] ?? 1));
 $status_filter = trim($_GET['status'] ?? '');
@@ -63,18 +72,21 @@ $course_filter = trim($_GET['course'] ?? '');
 $date_from = trim($_GET['date_from'] ?? '');
 $date_to = trim($_GET['date_to'] ?? '');
 
-$offset = ($page - 1) * $records_per_page;
+$valid_date = static fn(string $d): bool => (bool)preg_match('/^\d{4}-\d{2}-\d{2}$/', $d) && strtotime($d) !== false;
+if ($date_from !== '' && !$valid_date($date_from)) $date_from = '';
+if ($date_to !== '' && !$valid_date($date_to)) $date_to = '';
 
-$need_course_join = $course_filter !== '';
-
-$joins = "LEFT JOIN users u ON ll.email = u.email";
-
-if ($need_course_join) {
-    $joins .= "
-        LEFT JOIN course_registration cr ON cr.user_id = u.unique_id
-        LEFT JOIN courses c ON cr.course_id = c.id
-    ";
+// Quick range; ignored when explicit dates are given. Default: last 30 days.
+$range_options = ['7' => 'Last 7 days', '30' => 'Last 30 days', '90' => 'Last 90 days', 'all' => 'All time'];
+$range = (string)($_GET['range'] ?? '30');
+if (!isset($range_options[$range])) $range = '30';
+if ($date_from === '' && $date_to === '' && $range !== 'all') {
+    $range_from = date('Y-m-d 00:00:00', strtotime('-' . ((int)$range - 1) . ' days'));
+} else {
+    $range_from = '';
 }
+
+if (!in_array($status_filter, ['', 'success', 'failed', 'error'], true)) $status_filter = '';
 
 $where_parts = [];
 $filter_params = [];
@@ -86,90 +98,103 @@ if ($status_filter !== '') {
     $filter_types .= 's';
 }
 
-if ($need_course_join) {
-    $where_parts[] = 'c.name LIKE ?';
-    $filter_params[] = '%' . $course_filter . '%';
+if ($course_filter !== '') {
+    // EXISTS instead of joins: no duplicate rows, so no GROUP BY needed.
+    $where_parts[] = 'EXISTS (
+        SELECT 1
+        FROM users uf
+        JOIN course_registration crf ON crf.user_id = uf.unique_id
+        JOIN courses cf ON cf.id = crf.course_id
+        WHERE uf.email = ll.email AND cf.name = ?
+    )';
+    $filter_params[] = $course_filter;
+    $filter_types .= 's';
+}
+
+// Range conditions on the raw column (index-friendly), never DATE(column).
+if ($range_from !== '') {
+    $where_parts[] = 'll.login_time >= ?';
+    $filter_params[] = $range_from;
     $filter_types .= 's';
 }
 
 if ($date_from !== '') {
-    $where_parts[] = 'DATE(ll.login_time) >= ?';
-    $filter_params[] = $date_from;
+    $where_parts[] = 'll.login_time >= ?';
+    $filter_params[] = $date_from . ' 00:00:00';
     $filter_types .= 's';
 }
 
 if ($date_to !== '') {
-    $where_parts[] = 'DATE(ll.login_time) <= ?';
-    $filter_params[] = $date_to;
+    $where_parts[] = 'll.login_time < ?';
+    $filter_params[] = date('Y-m-d 00:00:00', strtotime($date_to . ' +1 day'));
     $filter_types .= 's';
 }
 
 $where_clause = $where_parts ? 'WHERE ' . implode(' AND ', $where_parts) : '';
 
-$count_sql = "
-    SELECT COUNT(*) AS total
-    FROM (
-        SELECT ll.id
-        FROM login_logs ll
-        $joins
-        $where_clause
-        GROUP BY ll.id
-    ) sub
+// One pass: total for pagination + the summary cards.
+$today_start = date('Y-m-d 00:00:00');
+$stats_sql = "
+    SELECT
+        COUNT(*) AS total,
+        COALESCE(SUM(ll.status = 'success'), 0) AS successful,
+        COALESCE(SUM(ll.status = 'failed'), 0)  AS failed,
+        COALESCE(SUM(ll.status = 'error'), 0)   AS errors,
+        COALESCE(SUM(ll.login_time >= ?), 0)    AS today
+    FROM login_logs ll
+    $where_clause
 ";
 
-$count_result = runQuery($conn, $count_sql, $filter_types, $filter_params);
-$count_row = $count_result ? $count_result->fetch_assoc() : ['total' => 0];
+$stats_result = runQuery($conn, $stats_sql, 's' . $filter_types, array_merge([$today_start], $filter_params));
+$stats = $stats_result ? ($stats_result->fetch_assoc() ?: []) : [];
 
-$total_records = (int)($count_row['total'] ?? 0);
+$total_records = (int)($stats['total'] ?? 0);
 $total_pages = max(1, (int)ceil($total_records / $records_per_page));
 $page = min($page, $total_pages);
 $offset = ($page - 1) * $records_per_page;
 
-$stats_sql = "
-    SELECT
-        COUNT(DISTINCT ll.id) AS total,
-        SUM(CASE WHEN ll.status = 'success' THEN 1 ELSE 0 END) AS successful,
-        SUM(CASE WHEN ll.status = 'failed' THEN 1 ELSE 0 END) AS failed,
-        SUM(CASE WHEN ll.status = 'error' THEN 1 ELSE 0 END) AS errors,
-        SUM(CASE WHEN DATE(ll.login_time) = CURDATE() THEN 1 ELSE 0 END) AS today
-    FROM login_logs ll
-    $joins
-    $where_clause
-";
-
-$stats_result = runQuery($conn, $stats_sql, $filter_types, $filter_params);
-$stats = $stats_result ? $stats_result->fetch_assoc() : [];
-
+// Page rows first (login_logs only), then names/courses for just those rows.
 $data_sql = "
     SELECT
-        ll.id,
-        ll.email,
-        ll.login_time,
-        ll.ip_address,
-        ll.status,
+        p.id,
+        p.email,
+        p.login_time,
+        p.ip_address,
+        p.status,
         u.fname,
         u.lname,
         (
             SELECT GROUP_CONCAT(DISTINCT c2.name ORDER BY c2.name SEPARATOR ', ')
             FROM course_registration cr2
-            LEFT JOIN courses c2 ON cr2.course_id = c2.id
+            JOIN courses c2 ON cr2.course_id = c2.id
             WHERE cr2.user_id = u.unique_id
         ) AS course_name
-    FROM login_logs ll
-    $joins
-    $where_clause
-    GROUP BY ll.id
-    ORDER BY ll.login_time DESC
-    LIMIT ? OFFSET ?
+    FROM (
+        SELECT ll.id, ll.email, ll.login_time, ll.ip_address, ll.status
+        FROM login_logs ll
+        $where_clause
+        ORDER BY ll.login_time DESC, ll.id DESC
+        LIMIT ? OFFSET ?
+    ) p
+    -- one user per email, so duplicate user records never duplicate a log row
+    LEFT JOIN users u ON u.id = (SELECT MIN(u1.id) FROM users u1 WHERE u1.email = p.email)
+    ORDER BY p.login_time DESC, p.id DESC
 ";
 
 $data_params = array_merge($filter_params, [$records_per_page, $offset]);
 $data_types = $filter_types . 'ii';
 
-$result = runQuery($conn, $data_sql, $data_types, $data_params);
+$result = $total_records > 0 ? runQuery($conn, $data_sql, $data_types, $data_params) : false;
 
 $courses_result = $conn->query("SELECT DISTINCT name FROM courses WHERE name IS NOT NULL AND name != '' ORDER BY name ASC");
 $available_courses = $courses_result ? $courses_result->fetch_all(MYSQLI_ASSOC) : [];
+
+if ($date_from !== '' || $date_to !== '') {
+    $period_label = ($date_from !== '' ? date('d M Y', strtotime($date_from)) : 'the beginning')
+        . ' to ' . ($date_to !== '' ? date('d M Y', strtotime($date_to)) : 'today');
+} else {
+    $period_label = $range_options[$range];
+}
 ?>
 
 <div class="row wrapper border-bottom white-bg page-heading">
@@ -198,7 +223,7 @@ $available_courses = $courses_result ? $courses_result->fetch_all(MYSQLI_ASSOC) 
         <div class="ibox-content">
             <div class="row">
 
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <div class="form-group">
                         <label>Course</label>
                         <select name="course" class="form-control">
@@ -207,6 +232,17 @@ $available_courses = $courses_result ? $courses_result->fetch_all(MYSQLI_ASSOC) 
                                 <option value="<?= h($c['name']); ?>" <?= $course_filter === $c['name'] ? 'selected' : ''; ?>>
                                     <?= h($c['name']); ?>
                                 </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label>Period</label>
+                        <select name="range" class="form-control" title="Used when no From/To dates are set">
+                            <?php foreach ($range_options as $value => $label): ?>
+                                <option value="<?= h($value); ?>" <?= $range === (string)$value ? 'selected' : ''; ?>><?= h($label); ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>
@@ -238,7 +274,7 @@ $available_courses = $courses_result ? $courses_result->fetch_all(MYSQLI_ASSOC) 
                     </div>
                 </div>
 
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <div class="form-group" style="margin-top:24px;">
                         <button type="submit" class="btn btn-primary">
                             <i class="fa fa-filter"></i> Filter
@@ -305,7 +341,7 @@ $available_courses = $courses_result ? $courses_result->fetch_all(MYSQLI_ASSOC) 
 
     <div class="ibox">
         <div class="ibox-title">
-            <h5>Login Records</h5>
+            <h5>Login Records &mdash; <?= h($period_label); ?></h5>
             <div class="ibox-tools">
                 <span class="label label-primary"><?= number_format($total_records); ?> records</span>
             </div>

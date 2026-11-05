@@ -119,6 +119,50 @@ if ($canBulkUpload) {
     </div>
   </div>
 
+  <!-- -- Statistics: follow the filters; click Active / Inactive to filter -- -->
+  <style>
+    #studentStats .st-card { cursor: pointer; user-select: none; }
+    #studentStats .st-card:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+    #studentStats .st-card.is-selected { border-top-color: var(--gold); box-shadow: 0 0 0 2px var(--maroon) inset; }
+    #studentStats .st-static { cursor: default; }
+    #studentStats .st-sub { font-size: .78rem; color: var(--muted); }
+    @media (max-width: 900px) { #studentStats { grid-template-columns: repeat(2, 1fr); } }
+  </style>
+  <div class="dash-stats" id="studentStats" aria-label="Student statistics">
+    <div class="dash-stat st-card" data-status="" role="button" tabindex="0" title="Show all students">
+      <div class="dash-stat-header">
+        <span class="dash-stat-label">Students</span>
+        <span class="dash-stat-tag dst-maroon"><i class="fas fa-users"></i></span>
+      </div>
+      <div class="dash-stat-num" id="statTotal">&ndash;</div>
+      <div class="st-sub">matching the current filters</div>
+    </div>
+    <div class="dash-stat st-card" data-status="active" role="button" tabindex="0" title="Show only active students">
+      <div class="dash-stat-header">
+        <span class="dash-stat-label">Active</span>
+        <span class="dash-stat-tag dst-green"><i class="fas fa-user-check"></i></span>
+      </div>
+      <div class="dash-stat-num" id="statActive" style="color:var(--green);">&ndash;</div>
+      <div class="st-sub" id="statActiveSub">&nbsp;</div>
+    </div>
+    <div class="dash-stat st-card" data-status="inactive" role="button" tabindex="0" title="Show only inactive students">
+      <div class="dash-stat-header">
+        <span class="dash-stat-label">Inactive</span>
+        <span class="dash-stat-tag dst-gold"><i class="fas fa-user-clock"></i></span>
+      </div>
+      <div class="dash-stat-num" id="statInactive">&ndash;</div>
+      <div class="st-sub" id="statInactiveSub">&nbsp;</div>
+    </div>
+    <div class="dash-stat st-static">
+      <div class="dash-stat-header">
+        <span class="dash-stat-label">New</span>
+        <span class="dash-stat-tag dst-gold"><i class="fas fa-user-plus"></i></span>
+      </div>
+      <div class="dash-stat-num" id="statNew">&ndash;</div>
+      <div class="st-sub">joined in the last 30 days</div>
+    </div>
+  </div>
+
   <!-- -- Filter panel --------------------------------------- -->
   <div class="controls-bar" style="flex-wrap:wrap; margin-bottom:20px;">
 
@@ -519,6 +563,7 @@ if ($canBulkUpload) {
         }
         updatePaging(data.currentPage || page, data.totalEntries || 0, params.limit);
         refreshSelection();
+        renderStats(data.stats);
       })
       .catch(function(err) {
         console.error(err);
@@ -676,6 +721,48 @@ if ($canBulkUpload) {
         }
       })
       .catch(function(){ setBtnLoading('exportPdfBtn','pdfSpin',false); showToast('Export failed.','error'); });
+  });
+
+  /* -- Statistics cards ------------------------------------- */
+  function fmtNum(n) { return Number(n || 0).toLocaleString(); }
+  function pctOf(part, total) { return total ? Math.round(part * 100 / total) : 0; }
+
+  function markSelectedStat() {
+    var current = val('statusFilter');
+    document.querySelectorAll('#studentStats .st-card').forEach(function(card){
+      var on = card.getAttribute('data-status') === current;
+      card.classList.toggle('is-selected', on);
+      card.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+  }
+
+  function renderStats(st) {
+    markSelectedStat();
+    if (!st) return;
+    document.getElementById('statTotal').textContent    = fmtNum(st.total);
+    document.getElementById('statActive').textContent   = fmtNum(st.active);
+    document.getElementById('statInactive').textContent = fmtNum(st.inactive);
+    document.getElementById('statNew').textContent      = fmtNum(st.new_30d);
+    document.getElementById('statActiveSub').textContent   = pctOf(st.active, st.total) + '% of students';
+    document.getElementById('statInactiveSub').textContent = st.inactive
+      ? pctOf(st.inactive, st.total) + '% \u2014 click to list them'
+      : 'none';
+  }
+
+  function applyStatFilter(card) {
+    var wanted = card.getAttribute('data-status');
+    // Clicking the selected Active/Inactive card again goes back to all students.
+    if (wanted !== '' && val('statusFilter') === wanted) wanted = '';
+    document.getElementById('statusFilter').value = wanted;
+    markSelectedStat();
+    loadStudents(1);
+  }
+
+  document.querySelectorAll('#studentStats .st-card').forEach(function(card){
+    card.addEventListener('click', function(){ applyStatFilter(card); });
+    card.addEventListener('keydown', function(e){
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); applyStatFilter(card); }
+    });
   });
 
   /* -- Bulk activation (admins only) ------------------------ */
