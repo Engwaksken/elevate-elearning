@@ -17,11 +17,38 @@ class EmailService
 
     public function __construct()
     {
+        $this->systemname  = (string)eh_env('EH_MAIL_FROM_NAME', $this->systemname);
+        $this->systememail = (string)eh_env('EH_MAIL_FROM_ADDRESS', $this->systememail);
+        $this->domainname  = rtrim((string)eh_env('EH_APP_URL', $this->domainname), '/');
+
         $this->mail = new PHPMailer(true);
         $this->configureSMTP();
     }
 
-    private function configureSMTP(): void
+    /**
+     * SMTP settings from .env (EH_MAIL_*). Returns null when EH_MAIL_HOST is not set,
+     * so installs without a .env keep using the email_settings table.
+     */
+    private static function settingsFromEnv(): ?array
+    {
+        $host = trim((string)eh_env('EH_MAIL_HOST', ''));
+        if ($host === '') {
+            return null;
+        }
+
+        return [
+            'smtp_host'     => $host,
+            'smtp_port'     => (int)eh_env('EH_MAIL_PORT', '465'),
+            'smtp_user'     => (string)eh_env('EH_MAIL_USERNAME', ''),
+            'smtp_password' => (string)eh_env('EH_MAIL_PASSWORD', ''),
+            'smtp_secure'   => (string)eh_env('EH_MAIL_ENCRYPTION', 'ssl'),
+            'from_email'    => (string)eh_env('EH_MAIL_FROM_ADDRESS', ''),
+            'from_name'     => (string)eh_env('EH_MAIL_FROM_NAME', ''),
+        ];
+    }
+
+    /** SMTP settings from the newest row of the email_settings table. */
+    private function settingsFromDatabase(): array
     {
         global $conn;
 
@@ -56,6 +83,14 @@ class EmailService
             throw new Exception("Email settings are not configured.");
         }
 
+        return $settings;
+    }
+
+    private function configureSMTP(): void
+    {
+        // Global mail configuration from .env wins; otherwise the email_settings table.
+        $settings = self::settingsFromEnv() ?? $this->settingsFromDatabase();
+
         $host      = trim($settings['smtp_host']     ?? '');
         $port      = (int)($settings['smtp_port']    ?? 0);
         $user      = trim($settings['smtp_user']     ?? '');
@@ -80,6 +115,9 @@ class EmailService
             $this->mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
         } elseif ($secure === 'tls' || $secure === 'starttls') {
             $this->mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        } elseif ($secure === 'none' || $secure === 'off') {
+            $this->mail->SMTPSecure  = '';
+            $this->mail->SMTPAutoTLS = false;
         } else {
             $this->mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
         }

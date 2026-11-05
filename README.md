@@ -5,30 +5,53 @@ quizzes, chatrooms, payments and certificates.
 
 ## Requirements
 
-- PHP 8.1+ with `mysqli`, `mbstring`, `gd`
+- PHP 8.1+ with `mysqli`, `mbstring`, `gd`, `dom`, `fileinfo`
 - MySQL / MariaDB
-- Composer (Dompdf is used for certificate PDFs)
+
+PHP libraries (Dompdf for certificate PDFs) are already in `vendor/`, so no
+`composer install` is needed on the server.
 
 ## Setup
 
-1. Install PHP dependencies:
+1. Clone or upload the project, **including `vendor/`**.
+
+2. Create the settings file from the template and fill in real values:
 
    ```bash
-   composer install
+   cp .env.example .env
    ```
 
-2. Configure the database. Copy the example config and fill in real values:
+   - **Recommended:** put `.env` one folder **above** the project (outside the
+     public web folder), e.g. `/home/<user>/.env` when the project is
+     `/home/<user>/public_html`. The app looks there first, then in the
+     project folder.
+   - If it must live in the project folder, the root `.htaccess` blocks it
+     from being downloaded. Keep that file.
+   - `.env` holds the database, global SMTP mail, site URL, SSO and upload
+     compression settings. See the comments in `.env.example`.
+   - When `EH_MAIL_HOST` is set, every system email uses those SMTP settings;
+     when it is empty, the `email_settings` database table is used instead.
+   - Older installs may still use `scripts/config.local.php` for the database;
+     `.env` values take precedence over it.
 
-   ```bash
-   cp scripts/config.example.php scripts/config.local.php
-   ```
+3. Never commit `.env` (it is git-ignored).
 
-   `scripts/config.local.php` is git-ignored. Alternatively set the environment
-   variables `EH_DB_HOST`, `EH_DB_USER`, `EH_DB_PASS` and `EH_DB_NAME`.
+## Updating libraries
 
-3. SMTP settings are stored in the database (email settings table), and SSO /
-   unified-auth secrets come from environment variables (`EH_SSO_SECRET`, etc.).
-   Never commit real secrets.
+On your own computer (not the server):
+
+```bash
+composer update --no-dev --prefer-dist
+```
+
+Then commit `vendor/` together with `composer.lock`.
+
+## Maintenance scripts (run from the project folder, via SSH or a cPanel cron job)
+
+```bash
+php scripts/cli/compress_existing_uploads.php            # dry run, then add --apply
+php scripts/cli/find_orphan_uploads.php                  # report, then add --quarantine
+```
 
 ## Not in this repository
 

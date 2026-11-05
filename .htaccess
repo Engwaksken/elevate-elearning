@@ -1,0 +1,32 @@
+# -----------------------------------------------------------------------------
+# Security rules for the eLearning project root.
+# If your host already gave you an .htaccess here (e.g. a cPanel PHP-version
+# handler), keep those lines and add these below them.
+# -----------------------------------------------------------------------------
+
+# Hidden files: .env, .git*, .htaccess, .DS_Store ...
+<FilesMatch "^\.">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# Config, dependency manifests and docs that should never be served.
+<FilesMatch "^(composer\.(json|lock)|config\.local\.php|config\.example\.php|README\.md|error_log)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# Folders that must not be reachable by URL.
+<IfModule mod_alias.c>
+    RedirectMatch 404 ^/(.*/)?(\.git|_maintenance|scripts/cli)(/|$)
+</IfModule>

@@ -22,8 +22,8 @@ function e($value) {
 /** EH_ELEARNING_LOCAL_LOGIN=0 ? redirect-only to portal (cutover). Default: local login allowed (soak). */
 function elevate_local_login_enabled(): bool
 {
-    $raw = getenv('EH_ELEARNING_LOCAL_LOGIN');
-    if ($raw === false || $raw === '') {
+    $raw = function_exists('eh_env') ? eh_env('EH_ELEARNING_LOCAL_LOGIN') : (getenv('EH_ELEARNING_LOCAL_LOGIN') ?: null);
+    if ($raw === null || $raw === '') {
         return true;
     }
     return !in_array(strtolower(trim($raw)), ['0', 'false', 'no', 'off'], true);

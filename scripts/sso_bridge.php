@@ -9,14 +9,12 @@ declare(strict_types=1);
  *      EH_SSO_REQUIRE_MFA, EH_SSO_FORCE_PORTAL, EH_AUTH_PUBLIC_BASE
  */
 
+require_once __DIR__ . '/env.php';
+
 function eh_sso_config(string $key, string $default): string
 {
-    $envKey = 'EH_' . strtoupper($key);
-    $val = getenv($envKey);
-    if ($val !== false && $val !== '') {
-        return $val;
-    }
-    return $default;
+    // Real environment variable or .env (EH_ prefix), else the default.
+    return (string)eh_env('EH_' . strtoupper($key), $default);
 }
 
 function eh_sso_cookie_name(): string

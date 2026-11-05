@@ -5,6 +5,7 @@ _maintenance/
 scripts/config.local.php
 .env
 .env.*
+!.env.example
 
 # --- User-generated content / personal data (lives on the server only) ---
 assignments/

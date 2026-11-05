@@ -22,6 +22,8 @@ declare(strict_types=1);
 |   EH_PDF_QUALITY=ebook      gs PDFSETTINGS: screen|ebook|printer|prepress
 */
 
+require_once __DIR__ . '/env.php';
+
 const EH_IMG_MAX_EDGE       = 2400;      // px, longest side
 const EH_IMG_MAX_PIXELS     = 60000000;  // skip images too large to decode safely
 const EH_JPEG_QUALITY       = 80;
@@ -39,8 +41,8 @@ const EH_DANGEROUS_EXTENSIONS = [
 
 function eh_compression_enabled(): bool
 {
-    $flag = getenv('EH_UPLOAD_COMPRESSION');
-    return $flag === false || !in_array(strtolower(trim($flag)), ['0', 'false', 'off', 'no'], true);
+    $flag = eh_env('EH_UPLOAD_COMPRESSION');
+    return $flag === null || !in_array(strtolower(trim($flag)), ['0', 'false', 'off', 'no'], true);
 }
 
 /**
@@ -217,8 +219,8 @@ function eh_ghostscript_binary(): string
     if (!eh_function_usable('proc_open')) return $bin = '';
 
     // @ on is_file(): open_basedir restrictions emit warnings for system paths.
-    $env = getenv('EH_GHOSTSCRIPT');
-    if ($env !== false && $env !== '' && @is_file($env)) return $bin = $env;
+    $env = (string)eh_env('EH_GHOSTSCRIPT', '');
+    if ($env !== '' && @is_file($env)) return $bin = $env;
 
     if (eh_function_usable('shell_exec')) {
         $candidates = DIRECTORY_SEPARATOR === '\\' ? ['gswin64c', 'gswin32c'] : ['gs'];
@@ -250,7 +252,7 @@ function eh_compress_pdf_to_temp(string $path, int $timeout, int $maxMb, ?string
     if (!eh_function_usable('proc_open') || !eh_function_usable('proc_get_status')) { $reason = 'proc_open disabled'; return null; }
     if ($maxMb > 0 && filesize($path) > $maxMb * 1024 * 1024) { $reason = "PDF larger than {$maxMb} MB"; return null; }
 
-    $quality = strtolower((string)(getenv('EH_PDF_QUALITY') ?: 'ebook'));
+    $quality = strtolower((string)eh_env('EH_PDF_QUALITY', 'ebook'));
     if (!in_array($quality, ['screen', 'ebook', 'printer', 'prepress'], true)) $quality = 'ebook';
 
     $tmp = eh_temp_beside($path);
