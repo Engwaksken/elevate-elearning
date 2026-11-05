@@ -1,0 +1,42 @@
+# --- Secrets -------------------------------------------------------------
+scripts/config.local.php
+.env
+.env.*
+
+# --- User-generated content / personal data (lives on the server only) ---
+assignments/
+certificates/
+notes/
+online_class/
+course_materials/
+uploads/
+images/user_p_pics/*
+!images/user_p_pics/.gitkeep
+
+# --- Dependencies (install with `composer install`) --------------------
+vendor/
+
+# --- Logs ----------------------------------------------------------------
+error_log
+*.log
+
+# --- OS / editor junk ----------------------------------------------------
+.DS_Store
+._*
+Thumbs.db
+.idea/
+.vscode/
+
+# --- Unused theme demo ---------------------------------------------------
+Angular/
+
+# --- Remnants of a past server compromise --------------------------------
+# These PHP files sit in asset folders (css/js/img/fonts) where no app code
+# belongs. They are malware-scanner-cleaned stubs or inert fragments.
+# Asset folders must never contain PHP; delete them from the server too.
+css/**/*.php
+js/**/*.php
+img/**/*.php
+images/**/*.php
+fonts/**/*.php
+font-awesome/**/*.php

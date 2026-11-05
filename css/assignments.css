@@ -1,0 +1,54 @@
+.table th {
+    background: #fc7f10;
+    color: #000000;
+}
+
+.table td, .table th {
+    vertical-align: middle;
+}
+
+.badge-success { background: #28a745; }
+.badge-warning { background: #f39c12; }
+
+.analytics-card {
+    border: 1px solid #dee2e6;
+    border-radius: 10px;
+    padding: 14px;
+    background: #fff;
+    box-shadow: 0 2px 6px rgba(0,0,0,.06);
+    height: 100%;
+}
+
+.analytics-card .title {
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: #1f2d3d;
+}
+
+.analytics-card .metric {
+    display: flex;
+    justify-content: space-between;
+    margin: 6px 0;
+    font-size: 14px;
+}
+
+.analytics-card .metric span:last-child {
+    font-weight: 700;
+}
+
+.analytics-card .pill {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    background: rgba(252,127,16,.12);
+    color: #fc7f10;
+    margin-left: 8px;
+}
+
+.analytics-empty {
+    padding: 10px 0;
+    color: #6c757d;
+    font-style: italic;
+}

@@ -1,0 +1,6 @@
+{
+    "require": {
+        "africastalking/africastalking": "*",
+        "dompdf/dompdf": "^3.1.4"
+    }
+}

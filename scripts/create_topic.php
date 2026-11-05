@@ -1,0 +1,38 @@
+<?php
+declare(strict_types=1);
+require_once __DIR__ . '/course_content_helpers.php';
+
+try {
+    $conn = cc_require_db();
+    [$uid, $role] = cc_current_user();
+    cc_require_instructor_role($role);
+
+    $courseId = (int)($_POST['course_id'] ?? 0);
+    $moduleId = (int)($_POST['course_unit_id'] ?? 0);
+    $intakeId = (int)($_POST['intake_id'] ?? 0);
+    $title = trim((string)($_POST['title'] ?? ''));
+    $description = trim((string)($_POST['description'] ?? ''));
+    $order = max(1, (int)($_POST['order_number'] ?? 1));
+    $required = !empty($_POST['is_required']) ? 1 : 0;
+    $classMode = cc_valid_class_mode((string)($_POST['class_mode'] ?? 'both'));
+    $status = cc_valid_status((string)($_POST['status'] ?? 'active'));
+
+    if ($courseId <= 0 || $moduleId <= 0 || $title === '') {
+        cc_json(['success' => false, 'message' => 'Course, module and topic title are required.'], 422);
+    }
+    if (!cc_check_instructor_course_access($conn, $uid, $role, $courseId) || !cc_module_belongs_to_course($conn, $moduleId, $courseId)) {
+        cc_json(['success' => false, 'message' => 'Invalid or unauthorised course/module.'], 403);
+    }
+
+    $now = date('Y-m-d H:i:s');
+    $stmt = $conn->prepare("INSERT INTO course_topics (course_id, course_unit_id, intake_id, title, description, order_number, is_required, class_mode, status, created_by, created_at) VALUES (?, ?, NULLIF(?,0), ?, ?, ?, ?, ?, ?, ?, ?)");
+    if (!$stmt) throw new RuntimeException($conn->error);
+    $stmt->bind_param('iiissiissss', $courseId, $moduleId, $intakeId, $title, $description, $order, $required, $classMode, $status, $uid, $now);
+    if (!$stmt->execute()) throw new RuntimeException($stmt->error);
+    $id = $stmt->insert_id;
+    $stmt->close();
+
+    cc_json(['success' => true, 'message' => 'Topic created successfully.', 'topic_id' => $id]);
+} catch (Throwable $e) {
+    cc_json(['success' => false, 'message' => $e->getMessage()], 500);
+}
