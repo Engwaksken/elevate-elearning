@@ -2,7 +2,16 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/connector.php';
-require_once __DIR__ . '/../../vendor/autoload.php';
+// Bundled vendor/ in the project first; the parent folder is a legacy fallback.
+foreach ([__DIR__ . '/../vendor/autoload.php', __DIR__ . '/../../vendor/autoload.php'] as $autoload) {
+    if (is_file($autoload)) {
+        require_once $autoload;
+        break;
+    }
+}
+if (!class_exists(\Dompdf\Dompdf::class)) {
+    die('Dompdf not found. Make sure the vendor/ folder was uploaded with the project.');
+}
 
 use Dompdf\Dompdf;
 use Dompdf\Options;

@@ -16,8 +16,11 @@ uploads/
 images/user_p_pics/*
 !images/user_p_pics/.gitkeep
 
-# --- Dependencies (install with `composer install`) --------------------
-vendor/
+# --- Dependencies ------------------------------------------------------
+# vendor/ IS committed: the shared server cannot run `composer install`.
+# After changing composer.json, run locally:
+#   composer update --no-dev --prefer-dist
+# and commit vendor/ together with composer.lock.
 
 # --- Logs ----------------------------------------------------------------
 error_log

@@ -211,19 +211,35 @@ function eh_ghostscript_binary(): string
     static $bin = null;
     if ($bin !== null) return $bin;
 
-    $env = getenv('EH_GHOSTSCRIPT');
-    if ($env !== false && $env !== '' && is_file($env)) return $bin = $env;
+    // Shared hosting commonly disables process functions; on PHP 8 calling a
+    // disabled function throws, so check first. Without proc_open, Ghostscript
+    // cannot be run at all.
+    if (!eh_function_usable('proc_open')) return $bin = '';
 
-    $candidates = DIRECTORY_SEPARATOR === '\\' ? ['gswin64c', 'gswin32c'] : ['gs'];
-    foreach ($candidates as $c) {
-        $probe = @shell_exec((DIRECTORY_SEPARATOR === '\\' ? 'where ' : 'command -v ') . escapeshellarg($c) . ' 2>' . (DIRECTORY_SEPARATOR === '\\' ? 'NUL' : '/dev/null'));
-        $line = trim(strtok((string)$probe, "\r\n") ?: '');
-        if ($line !== '' && is_file($line)) return $bin = $line;
+    // @ on is_file(): open_basedir restrictions emit warnings for system paths.
+    $env = getenv('EH_GHOSTSCRIPT');
+    if ($env !== false && $env !== '' && @is_file($env)) return $bin = $env;
+
+    if (eh_function_usable('shell_exec')) {
+        $candidates = DIRECTORY_SEPARATOR === '\\' ? ['gswin64c', 'gswin32c'] : ['gs'];
+        foreach ($candidates as $c) {
+            $probe = @shell_exec((DIRECTORY_SEPARATOR === '\\' ? 'where ' : 'command -v ') . escapeshellarg($c) . ' 2>' . (DIRECTORY_SEPARATOR === '\\' ? 'NUL' : '/dev/null'));
+            $line = trim(strtok((string)$probe, "\r\n") ?: '');
+            if ($line !== '' && @is_file($line)) return $bin = $line;
+        }
     }
-    foreach (['/usr/bin/gs', '/usr/local/bin/gs'] as $p) {
-        if (is_file($p)) return $bin = $p;
+    foreach (['/usr/bin/gs', '/usr/local/bin/gs', '/bin/gs'] as $p) {
+        if (@is_file($p)) return $bin = $p;
     }
     return $bin = '';
+}
+
+/** True when a function exists and is not listed in disable_functions. */
+function eh_function_usable(string $fn): bool
+{
+    if (!function_exists($fn)) return false;
+    $disabled = array_map('trim', explode(',', strtolower((string)ini_get('disable_functions'))));
+    return !in_array(strtolower($fn), $disabled, true);
 }
 
 function eh_compress_pdf_to_temp(string $path, int $timeout, int $maxMb, ?string &$reason): ?string
@@ -231,7 +247,7 @@ function eh_compress_pdf_to_temp(string $path, int $timeout, int $maxMb, ?string
     $reason = '';
     $gs = eh_ghostscript_binary();
     if ($gs === '') { $reason = 'Ghostscript not installed'; return null; }
-    if (!function_exists('proc_open')) { $reason = 'proc_open disabled'; return null; }
+    if (!eh_function_usable('proc_open') || !eh_function_usable('proc_get_status')) { $reason = 'proc_open disabled'; return null; }
     if ($maxMb > 0 && filesize($path) > $maxMb * 1024 * 1024) { $reason = "PDF larger than {$maxMb} MB"; return null; }
 
     $quality = strtolower((string)(getenv('EH_PDF_QUALITY') ?: 'ebook'));
