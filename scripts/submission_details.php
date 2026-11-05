@@ -144,7 +144,7 @@ $file_base = $file_uploaded ? basename($file_uploaded) : '';
                 ? Back
             </a>
             <?php if ($file_uploaded): ?>
-                <a class="btn btn-success btn-sm" href="download_file.php?submission_id=<?= (int)$submission_id; ?>">
+                <a class="btn btn-success btn-sm" href="download_file?submission_id=<?= (int)$submission_id; ?>">
                     <i class="fas fa-download"></i> Download File
                 </a>
             <?php endif; ?>
@@ -249,7 +249,7 @@ $file_base = $file_uploaded ? basename($file_uploaded) : '';
 
             <!-- Optional: quick actions -->
             <div class="mt-3 d-flex gap-2 flex-wrap">
-                <a class="btn btn-outline-primary btn-sm" href="index.php?view=my_assignment&course_id=<?= (int)$selected_course_id ?? 0; ?>">
+                <a class="btn btn-outline-primary btn-sm" href="./?view=my_assignment&course_id=<?= (int)$selected_course_id ?? 0; ?>">
                     Back to My Assignments
                 </a>
             </div>

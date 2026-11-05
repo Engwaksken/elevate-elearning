@@ -15,7 +15,7 @@ function flash_and_redirect(string $type, string $message): void
 {
     $_SESSION['verify_flash_type'] = $type;
     $_SESSION['verify_flash_msg'] = $message;
-    header("Location: ../verify.php");
+    header("Location: ../verify");
     exit;
 }
 
@@ -23,7 +23,7 @@ function redirect_login(string $message): void
 {
     global $systemname;
     $_SESSION[$systemname . "errormsg"] = $message;
-    header("Location: ../login.php");
+    header("Location: ../login");
     exit;
 }
 
@@ -100,7 +100,7 @@ function login_user_and_redirect(array $user, string $systemname): void
         $_SESSION['mfa_user']
     );
 
-    header("Location: ../index.php");
+    header("Location: ../");
     exit;
 }
 
@@ -166,7 +166,7 @@ function send_verification_email(mysqli $conn, array $user): bool
 }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header("Location: ../verify.php");
+    header("Location: ../verify");
     exit;
 }
 

@@ -107,7 +107,7 @@ $chartData = [
 <div class="dash-stats" style="margin-bottom:26px;">
 
     <!-- Total -->
-    <a href="index.php?view=view_students" class="dash-stat" style="text-decoration:none;">
+    <a href="./?view=view_students" class="dash-stat" style="text-decoration:none;">
         <div class="dash-stat-header">
             <span class="dash-stat-label">All Students</span>
             <span class="dash-stat-tag dst-maroon">Total</span>
@@ -117,7 +117,7 @@ $chartData = [
     </a>
 
     <!-- Enrolled -->
-    <a href="index.php?view=view_students&filter=enrolled" class="dash-stat" style="text-decoration:none;">
+    <a href="./?view=view_students&filter=enrolled" class="dash-stat" style="text-decoration:none;">
         <div class="dash-stat-header">
             <span class="dash-stat-label">Enrolled</span>
             <span class="dash-stat-tag dst-gold">Active</span>
@@ -127,7 +127,7 @@ $chartData = [
     </a>
 
     <!-- Graduated -->
-    <a href="index.php?view=view_students&filter=graduated" class="dash-stat" style="text-decoration:none;">
+    <a href="./?view=view_students&filter=graduated" class="dash-stat" style="text-decoration:none;">
         <div class="dash-stat-header">
             <span class="dash-stat-label">Graduated</span>
             <span class="dash-stat-tag dst-green">Done</span>
@@ -137,7 +137,7 @@ $chartData = [
     </a>
 
     <!-- Inactive -->
-    <a href="index.php?view=view_students&filter=inactive" class="dash-stat" style="text-decoration:none;">
+    <a href="./?view=view_students&filter=inactive" class="dash-stat" style="text-decoration:none;">
         <div class="dash-stat-header">
             <span class="dash-stat-label">Inactive</span>
             <span class="dash-stat-tag dst-red">Unverified</span>
@@ -181,7 +181,7 @@ $chartData = [
 <div class="stats" style="margin-bottom:28px;">
 
     <!-- Instructors -->
-    <a href="index.php?view=view_instructors" class="stat-card" style="text-decoration:none;">
+    <a href="./?view=view_instructors" class="stat-card" style="text-decoration:none;">
         <div class="stat-icon prog"><i class="fa fa-chalkboard-teacher"></i></div>
         <div>
             <div class="sv gold"><?php echo number_format($count_lecturer); ?></div>
@@ -190,7 +190,7 @@ $chartData = [
     </a>
 
     <!-- Admins -->
-    <a href="index.php?view=view_admin" class="stat-card" style="text-decoration:none;">
+    <a href="./?view=view_admin" class="stat-card" style="text-decoration:none;">
         <div class="stat-icon cancel"><i class="fa fa-user-shield"></i></div>
         <div>
             <div class="sv red"><?php echo number_format($count_admin); ?></div>
@@ -199,7 +199,7 @@ $chartData = [
     </a>
 
     <!-- Sup Admins -->
-    <a href="index.php?view=view_sup_admins" class="stat-card" style="text-decoration:none;">
+    <a href="./?view=view_sup_admins" class="stat-card" style="text-decoration:none;">
         <div class="stat-icon total"><i class="fa fa-crown"></i></div>
         <div>
             <div class="sv"><?php echo number_format($count_sup); ?></div>

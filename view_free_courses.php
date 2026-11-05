@@ -425,13 +425,13 @@ $conn->close();
               </a>
             </td>
             <td>
-              <a href="index.php?view=update_resource&id=${course.id}" 
+              <a href="./?view=update_resource&id=${course.id}" 
                  title="Edit Course">
                 <span class="label label-warning">
                   <i class="fa fa-edit"></i>
                 </span>
               </a>
-              <a href="index.php?view=delete_course&id=${course.id}" 
+              <a href="./?view=delete_course&id=${course.id}" 
                  title="Delete Course"
                  onclick="return confirm('Are you sure you want to delete this course?')">
                 <span class="label label-danger">

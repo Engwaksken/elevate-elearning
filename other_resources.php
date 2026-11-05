@@ -31,7 +31,7 @@ if (isset($_GET['delete_id'])) {
             $_SESSION['successmsg'] = $ok ? "Resource deleted successfully." : "Error deleting resource.";
         }
     }
-    header("Location: index.php?view=online_class");
+    header("Location: ./?view=online_class");
     exit();
 }
 
@@ -73,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['edit_id'])) {
     } else {
         $_SESSION['errormsg'] = implode('<br>', $errors);
     }
-    header("Location: index.php?view=online_class");
+    header("Location: ./?view=online_class");
     exit();
 }
 
@@ -152,7 +152,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_POST['edit_id'])) {
     } else {
         $_SESSION['errormsg'] = implode('<br>', $errors);
     }
-    header("Location: index.php?view=online_class");
+    header("Location: ./?view=online_class");
     exit();
 }
 
@@ -338,7 +338,7 @@ $conn->close();
   <div class="topbar-left">
     <h1><i class="fas fa-graduation-cap"></i> <?php echo htmlspecialchars($systemname ?? 'LMS') ?> &mdash; Other Resources</h1>
     <ol class="breadcrumb">
-      <li><a href="index.php"><i class="fas fa-home"></i> Home</a></li>
+      <li><a href="./"><i class="fas fa-home"></i> Home</a></li>
       <li class="active">Other Resources</li>
     </ol>
   </div>
@@ -802,7 +802,7 @@ function previewEditImage(input) {
 /* -- DELETE modal ---------------------------------------- */
 function showDeleteModal(row) {
   document.getElementById('del_title_display').textContent = '"' + (row.course_title || 'this resource') + '"';
-  document.getElementById('confirmDeleteBtn').href = 'index.php?view=online_class&delete_id=' + row.id;
+  document.getElementById('confirmDeleteBtn').href = './?view=online_class&delete_id=' + row.id;
   openOverlay('deleteModal');
 }
 

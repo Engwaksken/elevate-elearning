@@ -11,6 +11,8 @@ require_once __DIR__ . '/connector.php';
 class EmailService
 {
     private PHPMailer $mail;
+    /** Where the SMTP settings came from + host/port/user (never the password), for error logs. */
+    private string $mailSummary = '';
     private string $systemname  = "Elevate Her 360 eLearning";
     private string $systememail = "no-reply@elevateher360.org";
     private string $domainname  = "https://www.elevateher360.org";
@@ -44,6 +46,7 @@ class EmailService
             'smtp_secure'   => (string)eh_env('EH_MAIL_ENCRYPTION', 'ssl'),
             'from_email'    => (string)eh_env('EH_MAIL_FROM_ADDRESS', ''),
             'from_name'     => (string)eh_env('EH_MAIL_FROM_NAME', ''),
+            '_source'       => '.env (' . (eh_env_file() ?: 'host environment variables') . ')',
         ];
     }
 
@@ -83,6 +86,8 @@ class EmailService
             throw new Exception("Email settings are not configured.");
         }
 
+        $settings['_source'] = 'database table email_settings (EH_MAIL_HOST is not set in .env)';
+
         return $settings;
     }
 
@@ -98,6 +103,15 @@ class EmailService
         $secure    = strtolower(trim($settings['smtp_secure'] ?? ''));
         $fromEmail = trim($settings['from_email']    ?? '') ?: $user;
         $fromName  = trim($settings['from_name']     ?? '') ?: $this->systemname;
+
+        $this->mailSummary = sprintf(
+            'settings from %s; host=%s port=%d encryption=%s username=%s',
+            $settings['_source'] ?? 'unknown',
+            $host,
+            $port,
+            $secure !== '' ? $secure : 'auto',
+            $user
+        );
 
         if ($host === '' || $port <= 0 || $user === '' || $pass === '') {
             throw new Exception("Incomplete SMTP settings. Check host, port, user, and password.");
@@ -172,7 +186,7 @@ class EmailService
 
             return $this->mail->send();
         } catch (Exception $e) {
-            error_log("Email sending failed: " . $this->mail->ErrorInfo);
+            error_log("Email sending failed: " . $this->mail->ErrorInfo . ' [' . $this->mailSummary . ']');
             return false;
         } catch (Throwable $e) {
             error_log("Email service error: " . $e->getMessage());
@@ -270,7 +284,7 @@ class EmailService
         $safePassword = htmlspecialchars($password, ENT_QUOTES, 'UTF-8');
 
         $verificationUrl = $this->domainname
-            . "/elearning/verifyme.php?gen=" . urlencode($verifyToken)
+            . "/elearning/verifyme?gen=" . urlencode($verifyToken)
             . "&email=" . urlencode($email);
 
         $studentInfo = '';
@@ -854,4 +868,46 @@ public function notifyInstructorNoteComment(
     public function getSystemName(): string  { return $this->systemname;  }
     public function getSystemEmail(): string { return $this->systememail; }
     public function getDomainName(): string  { return $this->domainname;  }
+    public function getMailSummary(): string { return $this->mailSummary; }
+
+    /**
+     * Connect and log in to the SMTP server WITHOUT sending a message.
+     * Returns ['ok' => bool, 'error' => string, 'transcript' => string[]].
+     * Credentials are removed from the transcript.
+     */
+    public function testConnection(): array
+    {
+        $lines = [];
+        $hideNext = false;
+        $this->mail->SMTPDebug   = 3;
+        $this->mail->Debugoutput = static function ($str, $level) use (&$lines, &$hideNext) {
+            foreach (preg_split('/\R/', rtrim((string)$str)) as $line) {
+                if (preg_match('/^CLIENT -> SERVER:\s*(.*)$/', $line, $m)) {
+                    $cmd = $m[1];
+                    if ($hideNext) {
+                        $line = 'CLIENT -> SERVER: [credentials hidden]';
+                    } elseif (preg_match('/^AUTH\s+(PLAIN|LOGIN|CRAM-MD5|XOAUTH2)\s+\S+/i', $cmd, $a)) {
+                        $line = 'CLIENT -> SERVER: AUTH ' . strtoupper($a[1]) . ' [credentials hidden]';
+                    }
+                    $hideNext = false;
+                } elseif (preg_match('/^SERVER -> CLIENT:\s*334/', $line)) {
+                    $hideNext = true; // next client line is a base64 username/password
+                }
+                $lines[] = $line;
+            }
+        };
+
+        try {
+            $ok = $this->mail->smtpConnect();
+            $error = $ok ? '' : (string)$this->mail->ErrorInfo;
+        } catch (Throwable $e) {
+            $ok = false;
+            $error = $e->getMessage() ?: (string)$this->mail->ErrorInfo;
+        } finally {
+            $this->mail->smtpClose();
+            $this->mail->SMTPDebug = 0;
+        }
+
+        return ['ok' => $ok, 'error' => $error, 'transcript' => $lines];
+    }
 }

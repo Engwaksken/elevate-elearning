@@ -677,7 +677,7 @@ var doit=sel.value;
  if (doit!=""){
 	 
 	 //window.location.replace("<?php echo $domainname ?>elearning/index.php?view=addmaterialx&course=3&ausydfgasuidgipppuwqu="+doit);
-	window.location.replace("<?php echo $domainname ?>/elearning/index.php?view=addmaterialx&course=3&ausydfgasuidgipppuwqu="+doit);
+	window.location.replace("<?php echo $domainname ?>/elearning/?view=addmaterialx&course=3&ausydfgasuidgipppuwqu="+doit);
 			   
 	   
   }

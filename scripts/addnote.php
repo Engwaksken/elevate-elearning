@@ -6,7 +6,7 @@ $sessionKey = $systemname . 'leido';
 
 if ( (!isset($_POST['title']))||(!isset($_POST['details']))||(!isset($_POST['datedue']))){
 	
-	header("Location: ../index.php?view=todo");
+	header("Location: ../?view=todo");
 	die();
 	
 }else{
@@ -26,11 +26,11 @@ $uid = trim(strip_tags((string)$_SESSION[$sessionKey]));
 			
 
 			$_SESSION[$systemname."successmsg"] = $title." has been saved";
-              header("Location: ../index.php?view=todo");  
+              header("Location: ../?view=todo");  
 	die(); 			
 			}else{
 				$_SESSION[$systemname."errormsg"] = "Unknown error";
-             header("Location: ../index.php?view=todo");     
+             header("Location: ../?view=todo");     
 	die(); 
 			}
 	 

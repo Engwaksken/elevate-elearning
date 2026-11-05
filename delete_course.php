@@ -3,7 +3,7 @@
 require 'scripts/connector.php';
 
 function redirectToResources() {
-    header("Location: index.php?view=view_more_resources");
+    header("Location: ./?view=view_more_resources");
     exit;
 }
 

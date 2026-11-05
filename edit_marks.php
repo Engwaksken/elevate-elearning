@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'], $_POST['marks']
         ]);
 
       
-        header("Location: ../index.php?view=subby&hjadvhagsdjhsagsdhg&status=edited");
+        header("Location: ../?view=subby&hjadvhagsdjhsagsdhg&status=edited");
         exit;
     } catch (PDOException $e) {
         

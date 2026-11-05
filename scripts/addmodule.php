@@ -5,7 +5,7 @@ require 'connector.php';
 
 if ( (!isset($_POST['title']))||(!isset($_POST['days']))){
 	
-	header("Location: ../index.php?view=home");
+	header("Location: ../?view=home");
 	die();
 	
 }else{
@@ -24,11 +24,11 @@ $course=strip_tags(trim($_POST['course']));
 			
 
 			$_SESSION[$systemname."successmsg"] = $month." intake for ".$gg." has been added";
-               header("Location: ../index.php?view=addmaterial&course=".$course."");   
+               header("Location: ../?view=addmaterial&course=".$course."");   
 	die(); 			
 			}else{
 				$_SESSION[$systemname."errormsg"] = "Unknown error";
-                header("Location: ../index.php?view=addmaterial&course=".$course."");     
+                header("Location: ../?view=addmaterial&course=".$course."");     
 	die(); 
 			}
 	 

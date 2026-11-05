@@ -11,7 +11,7 @@ if (!isset($shortdescription) || trim($shortdescription) === '') {
 }
 
 if (!empty($_SESSION[$systemname . "loggedin"]) && !empty($_SESSION[$systemname . "email"])) {
-    header("Location: index.php");
+    header("Location: ./");
     exit;
 }
 
@@ -208,9 +208,9 @@ if (!elevate_local_login_enabled()) {
         </div>
 
         <div class="auth-links">
-            <a href="create_student.php">Student Sign Up</a>
+            <a href="create_student">Student Sign Up</a>
             <span>|</span>
-            <a href="forgot_password.php">Forgot Password?</a>
+            <a href="forgot_password">Forgot Password?</a>
             <span>|</span>
             <a href="../">Back</a>
         </div>

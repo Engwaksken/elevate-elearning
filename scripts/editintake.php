@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($intake_id <= 0 || empty($name) || empty($date_launching) || empty($date_ending) || $branch_id <= 0) {
         $_SESSION["errormsg"] = "All fields are required.";
-        header("Location: ../index.php?view=intakes");
+        header("Location: ../?view=intakes");
         exit;
     }
 
@@ -25,9 +25,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     $stmt->close();
-    header("Location: ../index.php?view=intakes");
+    header("Location: ../?view=intakes");
     exit;
 } else {
-    header("Location: ../index.php?view=intakes");
+    header("Location: ../?view=intakes");
     exit;
 }

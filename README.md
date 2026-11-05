@@ -21,10 +21,14 @@ PHP libraries (Dompdf for certificate PDFs) are already in `vendor/`, so no
    cp .env.example .env
    ```
 
-   - **Recommended:** put `.env` one folder **above** the project (outside the
-     public web folder), e.g. `/home/<user>/.env` when the project is
-     `/home/<user>/public_html`. The app looks there first, then in the
-     project folder.
+   - **Recommended:** put `.env` in your home folder, `/home/<user>/.env`
+     (outside the public web folder), then `chmod 600 ~/.env`. The app looks in
+     the project folder first, then up to 4 parent folders, so this works for
+     both `public_html` and `public_html/elearning`.
+   - Wrap passwords in single quotes: `EH_MAIL_PASSWORD='p@ss#word'`.
+   - Check mail with `php scripts/cli/test_mail.php` (add `--send=you@example.com`
+     to send a test message). It shows which settings are used and the SMTP
+     login conversation, never the password.
    - If it must live in the project folder, the root `.htaccess` blocks it
      from being downloaded. Keep that file.
    - `.env` holds the database, global SMTP mail, site URL, SSO and upload
@@ -35,6 +39,20 @@ PHP libraries (Dompdf for certificate PDFs) are already in `vendor/`, so no
      `.env` values take precedence over it.
 
 3. Never commit `.env` (it is git-ignored).
+
+## Clean URLs
+
+Pages are linked without `.php` (`/login`, `/certificate?id=5`, `/` for
+`index.php`). This needs Apache or LiteSpeed with `mod_rewrite` and the root
+`.htaccess` (standard on shared hosting). Old `.php` addresses still work:
+browser visits are redirected to the clean URL; form posts and background
+requests are served as-is and never redirected.
+
+If clean links return 404 after deploying, the host has rewrite rules
+disabled for the folder. Ask them to allow `.htaccess` overrides.
+
+`announcements.php` keeps its `.php` URL because the `announcements/` image
+folder has the same name.
 
 ## Updating libraries
 

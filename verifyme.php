@@ -14,7 +14,7 @@ if (isset($_GET['gen'], $_GET['email']))
 
     if ($result) {
         $_SESSION[$systemname . "successmsg"] = "You Have Been Verified <br> You may Login Now";
-        header("Location: login.php");
+        header("Location: login");
         exit;
     }
 
@@ -23,7 +23,7 @@ if (isset($_GET['gen'], $_GET['email']))
 }
 else
 {
-    header("Location: login.php");
+    header("Location: login");
     exit;
 }
 ?>

@@ -12,7 +12,7 @@ function redirect_with_msg($url, $key, $msg){
 $systemname = isset($systemname) ? $systemname : ''; 
 
 if (!isset($_GET['find'], $_GET['zambezia'], $_GET['bengani'])) {
-    header("Location: ../index.php");
+    header("Location: ../");
     exit;
 }
 
@@ -29,14 +29,14 @@ $uid      = trim(strip_tags($_SESSION[$systemname . "leido"] ?? ''));
 // Validate required values
 if ($notes <= 0 || $document === '' || $course === '') {
     $_SESSION[$systemname . "errormsg"] = "Invalid Request";
-    header("Location: ../index.php?view=home");
+    header("Location: ../?view=home");
     exit;
 }
 
 // Ensure DB connection exists
 if (!isset($conn) || !($conn instanceof mysqli)) {
     $_SESSION[$systemname . "errormsg"] = "Database connection not available.";
-    header("Location: ../index.php?view=home");
+    header("Location: ../?view=home");
     exit;
 }
 
@@ -48,7 +48,7 @@ $res = $stmt->get_result();
 
 if (!$res || $res->num_rows < 1) {
     $_SESSION[$systemname . "errormsg"] = "Invalid Request";
-    header("Location: ../index.php?view=home");
+    header("Location: ../?view=home");
     exit;
 }
 

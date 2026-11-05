@@ -14,13 +14,13 @@ $user_unique = $_SESSION[$systemname . "leido"] ?? '';
 $role        = $_SESSION[$systemname . "letype"] ?? '';
 
 if ($user_unique === '') {
-    header("Location: login.php");
+    header("Location: login");
     exit;
 }
 
 $adminRoles = ['sabrtw', 'xybrtw', 'xtfbry'];
 if (!in_array($role, $adminRoles, true)) {
-    header("Location: index.php");
+    header("Location: ./");
     exit;
 }
 
@@ -483,7 +483,7 @@ if ($qCountsRaw) {
                 </div>
 
                 <?php if ($courseFilter > 0 || $intakeFilter > 0): ?>
-                    <a href="mindsets.php" class="btn-modal-cancel" style="text-decoration:none;">
+                    <a href="mindsets" class="btn-modal-cancel" style="text-decoration:none;">
                         <i class="fa fa-rotate-left"></i> Reset
                     </a>
                 <?php endif; ?>

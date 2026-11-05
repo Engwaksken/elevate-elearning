@@ -5,7 +5,7 @@ require_once __DIR__ . '/auth_publish.php';
 
 if ( (!isset($_POST['oldpassword']))||(!isset($_POST['password1']))||(!isset($_POST['password2']))){
 	
-	header("Location: ../index.php?view=profile");
+	header("Location: ../?view=profile");
 	die();
 	
 }else{
@@ -17,12 +17,12 @@ $unik=strip_tags(trim($_SESSION[$systemname."leido"]));
 
 if($oldpassword=="" || $password1=="" || $password2==""){
 $_SESSION[$systemname."errormsg"] = "All fields are required";
-header("Location: ../index.php?view=profile");
+header("Location: ../?view=profile");
 	die();	
 }else if($password1!=$password2){
 	
 $_SESSION[$systemname."errormsg"] = "Passwords Do not match";
-header("Location: ../index.php?view=profile");
+header("Location: ../?view=profile");
 	die();		
 	
 }else{
@@ -39,7 +39,7 @@ $newpassword=$salta.$oldpassword;
 		
 if ($newpassword != $passwordx) {
     $_SESSION[$systemname."errormsg"] = "Invalid Old Password";
-  header("Location: ../index.php?view=profile");
+  header("Location: ../?view=profile");
 	die();
   
 }else{
@@ -62,11 +62,11 @@ if ($newpassword != $passwordx) {
 			], $conn);
 		}
 		 $_SESSION[$systemname."successmsg"] = "Password has been Changed";
-  header("Location: ../index.php?view=profile");
+  header("Location: ../?view=profile");
 	die(); 
 	 }else{
 		 $_SESSION[$systemname."errormsg"] = "Unknown Error";
-  header("Location: ../index.php?view=profile");
+  header("Location: ../?view=profile");
 	die();  
 		 
 	 }

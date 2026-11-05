@@ -247,7 +247,7 @@ function sendNoteNotification(string $course, string $intake, string $title): st
 |--------------------------------------------------------------------------
 */
 if (empty($_SESSION[$systemname . 'leido']) || empty($_SESSION[$systemname . 'letype'])) {
-    header('Location: ../index.php?view=home');
+    header('Location: ../?view=home');
     exit;
 }
 

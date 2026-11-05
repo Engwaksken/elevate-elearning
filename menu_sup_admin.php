@@ -44,7 +44,7 @@ $fullName = trim(($firstname ?? '') . ' ' . ($lastname ?? ''));
                         <li><a href="?view=profile"><i class="fa fa-lock"></i> Change Password</a></li>
                         <li><a href="?view=change_pic"><i class="fa fa-image"></i> Change Profile Picture</a></li>
                         <li class="divider"></li>
-                        <li><a href="logout.php"><i class="fa fa-sign-out"></i> Logout</a></li>
+                        <li><a href="logout"><i class="fa fa-sign-out"></i> Logout</a></li>
                     </ul>
                 </div>
 
@@ -52,7 +52,7 @@ $fullName = trim(($firstname ?? '') . ' ' . ($lastname ?? ''));
             </li>
 
             <li<?= is_active($view, ['', 'home']); ?>>
-                <a href="index.php">
+                <a href="./">
                     <i class="fa fa-home"></i>
                     <span class="nav-label">Home</span>
                 </a>

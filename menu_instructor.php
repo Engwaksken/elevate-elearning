@@ -53,7 +53,7 @@ $fullName = trim(($firstname ?? '') . ' ' . ($lastname ?? ''));
                         </li>
                         <li class="divider"></li>
                         <li>
-                            <a href="logout.php">
+                            <a href="logout">
                                 <i class="fa fa-sign-out"></i> Logout
                             </a>
                         </li>
@@ -62,7 +62,7 @@ $fullName = trim(($firstname ?? '') . ' ' . ($lastname ?? ''));
             </li>
 
             <li<?= active_menu($view, ['', 'home']); ?>>
-                <a href="index.php">
+                <a href="./">
                     <i class="fa fa-home"></i>
                     <span class="nav-label">Home</span>
                 </a>

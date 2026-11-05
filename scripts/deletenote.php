@@ -5,7 +5,7 @@ require 'connector.php';
 
 if ( !isset($_GET['note'])){
 	
-	header("Location: ../index.php?view=todo");
+	header("Location: ../?view=todo");
 	die();
 	
 }else{
@@ -17,7 +17,7 @@ $sql="SELECT * FROM `todolist` WHERE `id`='".$note."' AND `user_id`='".$uid."'";
  $re = $conn->query($sql)or die (mysqli_error());  
  if ($re->num_rows < 1) {
 	 	$_SESSION[$systemname."errormsg"] = "Invalid Note";
-              header("Location: ../index.php?view=todo");  
+              header("Location: ../?view=todo");  
 	die();
  
  }else{
@@ -25,11 +25,11 @@ $sql="SELECT * FROM `todolist` WHERE `id`='".$note."' AND `user_id`='".$uid."'";
 	 $zzz = $conn->query($new)or die (mysqli_error()); 
 	 if($zzz){
 		$_SESSION[$systemname."successmsg"] = "Note has been removed";
-              header("Location: ../index.php?view=todo");  
+              header("Location: ../?view=todo");  
 	die(); 	 
 	 }else{
 				$_SESSION[$systemname."errormsg"] = "Unknown error";
-             header("Location: ../index.php?view=todo");     
+             header("Location: ../?view=todo");     
 	die(); 
 			}
  }  

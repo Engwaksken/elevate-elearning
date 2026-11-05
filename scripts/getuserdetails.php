@@ -18,8 +18,8 @@ if (!isset($_POST['id'])) {
         while ($d = mysqli_fetch_array($b)) {
             $std_id = $d["unique_id"];
             $ver = ($d["verified"] == "yes") ?
-                '<a href="deactivate.php?id=' . $d["unique_id"] . '"><span class="label label-primary">Active</span></a>' :
-                '<a href="activate.php?id=' . $d["unique_id"] . '"><span class="label label-info">Not Active</span></a>';
+                '<a href="deactivate?id=' . $d["unique_id"] . '"><span class="label label-primary">Active</span></a>' :
+                '<a href="activate?id=' . $d["unique_id"] . '"><span class="label label-info">Not Active</span></a>';
 
             $mtype = "Unknown";
             $p = "";

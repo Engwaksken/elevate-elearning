@@ -142,13 +142,13 @@ $admin_count   = $admins_result ? $admins_result->num_rows : 0;
 
                             <!-- Toggle verified -->
                             <?php if ($verified): ?>
-                                <a href="deactivate.php?id=<?php echo urlencode($d['unique_id']); ?>&xts=view_admin"
+                                <a href="deactivate?id=<?php echo urlencode($d['unique_id']); ?>&xts=view_admin"
                                    class="ia-btn ia-del"
                                    title="Deactivate">
                                     <i class="fa fa-ban"></i>
                                 </a>
                             <?php else: ?>
-                                <a href="activate.php?id=<?php echo urlencode($d['unique_id']); ?>&xts=view_admin"
+                                <a href="activate?id=<?php echo urlencode($d['unique_id']); ?>&xts=view_admin"
                                    class="ia-btn ia-dl"
                                    title="Activate">
                                     <i class="fa fa-check"></i>

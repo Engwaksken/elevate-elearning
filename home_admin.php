@@ -91,7 +91,7 @@ $stats = getStudentStatusStats($conn);
   <!-- Top cards -->
   <div class="row">
     <div class="col-lg-3">
-      <div class="ibox float-e-margins dang stat-card" onclick="window.location='index.php?view=view_students'">
+      <div class="ibox float-e-margins dang stat-card" onclick="window.location='./?view=view_students'">
         <div class="ibox-title panel panel-success">
           <span class="label panel-heading label-success pull-right">Student accounts</span>
           <h5>Students</h5>
@@ -103,7 +103,7 @@ $stats = getStudentStatusStats($conn);
     </div>
 
     <div class="col-lg-3">
-      <div class="ibox float-e-margins dang stat-card" onclick="window.location='index.php?view=view_instructors'">
+      <div class="ibox float-e-margins dang stat-card" onclick="window.location='./?view=view_instructors'">
         <div class="ibox-title panel panel-info">
           <span class="label label-info pull-right">Instructor accounts</span>
           <h5>Instructors</h5>
@@ -116,7 +116,7 @@ $stats = getStudentStatusStats($conn);
 
     <?php if (!empty($showAdminCards)) : ?>
       <div class="col-lg-3">
-        <div class="ibox float-e-margins dang stat-card" onclick="window.location='index.php?view=view_admin'">
+        <div class="ibox float-e-margins dang stat-card" onclick="window.location='./?view=view_admin'">
           <div class="ibox-title panel panel-primary">
             <span class="label label-primary pull-right">Administrator accounts</span>
             <h5>Admins</h5>
@@ -130,7 +130,7 @@ $stats = getStudentStatusStats($conn);
 
     <?php if (!empty($showAccountCards)) : ?>
       <div class="col-lg-3">
-        <div class="ibox float-e-margins dang stat-card" onclick="window.location='index.php?view=view_accounts'">
+        <div class="ibox float-e-margins dang stat-card" onclick="window.location='./?view=view_accounts'">
           <div class="ibox-title panel panel-danger">
             <span class="label label-danger pull-right">Accountant accounts</span>
             <h5>Accounts</h5>

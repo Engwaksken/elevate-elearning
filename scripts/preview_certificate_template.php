@@ -482,7 +482,7 @@ body {
 <body>
 
 <div class="toolbar">
-    <a href="../index.php?view=certificate_templates">Back to Templates</a>
+    <a href="../?view=certificate_templates">Back to Templates</a>
     <button onclick="location.reload(true)">Refresh</button>
     <button onclick="window.print()">Print / Save PDF</button>
 </div>

@@ -5,9 +5,9 @@ declare(strict_types=1);
 |--------------------------------------------------------------------------
 | .env loader (no dependencies, shared-hosting friendly)
 |--------------------------------------------------------------------------
-| Looks for a .env file in this order and loads the FIRST one found:
-|   1. one folder ABOVE the project (recommended: outside the public web root)
-|   2. the project root (protected by the root .htaccess, but less safe)
+| Looks for .env in the project folder, then in each parent folder (up to 4
+| levels, e.g. public_html/elearning -> public_html -> /home/<user>). The
+| nearest file wins. Recommended: ~/.env, outside the public web folder.
 |
 | Real environment variables (set by the host) always win over .env.
 | Read values with eh_env('EH_DB_HOST', 'default'). Works even when the
@@ -23,14 +23,26 @@ if (!function_exists('eh_env')) {
         return $store;
     }
 
+    /**
+     * The .env file in use: the project folder first, then each parent folder
+     * up to 4 levels (e.g. public_html/elearning -> public_html -> /home/<user>).
+     * The nearest one wins. ~/.env (outside the web root) is the safest place.
+     */
     function eh_env_file(): string
     {
-        $project = dirname(__DIR__);
-        foreach ([dirname($project) . '/.env', $project . '/.env'] as $file) {
+        static $found = null;
+        if ($found !== null) return $found;
+
+        $dir = dirname(__DIR__);
+        for ($i = 0; $i <= 4; $i++) {
+            $file = $dir . DIRECTORY_SEPARATOR . '.env';
             // @: open_basedir may forbid looking above the web root.
-            if (@is_file($file) && @is_readable($file)) return $file;
+            if (@is_file($file) && @is_readable($file)) return $found = $file;
+            $parent = dirname($dir);
+            if ($parent === $dir) break;
+            $dir = $parent;
         }
-        return '';
+        return $found = '';
     }
 
     function eh_load_env(): void

@@ -4,7 +4,7 @@ require 'scripts/connector.php';
 
 if ( !isset($_GET['id'])){
 	
-	header("Location: index.php?view=view_students");
+	header("Location: ./?view=view_students");
 	die();
 	
 }else{
@@ -14,7 +14,7 @@ $checksystem = "SELECT * FROM users WHERE unique_id = '" . $uid. "'";
  $check = $conn->query($checksystem)or die (mysqli_error());
  if ($check->num_rows < 1) {
 $_SESSION[$systemname."errormsg"] = "Invalid User";
-               header("Location: index.php?view=".$page."");   
+               header("Location: ./?view=".$page."");   
 	die(); 
 
   
@@ -54,7 +54,7 @@ $message = '
               <p>This is to inform you that, Your account is currently deactivated. Please click the button below to Activate.</p>
 			  
 			  
-              <a href="'.$domainname.'/elearning/verifyme.php?gen='.$verify.'&&email='.$to.'" style="display: inline-block; padding: 11px 30px; margin: 20px 0px 30px; font-size: 15px; color: #fff; background: #1e88e5; border-radius: 60px; text-decoration:none;"> Verify Email </a>
+              <a href="'.$domainname.'/elearning/verifyme?gen='.$verify.'&&email='.$to.'" style="display: inline-block; padding: 11px 30px; margin: 20px 0px 30px; font-size: 15px; color: #fff; background: #1e88e5; border-radius: 60px; text-decoration:none;"> Verify Email </a>
               <p>Please do not mark this email as spam, we would like to keep you notified in as far your account with us is concerned.</p>
               <b>- Thanks ( '.$systemname.' Admin team)</b> </td>
           </tr>
@@ -80,11 +80,11 @@ mail($to,$subject,$message,$headers);
 	 
 	 
 $_SESSION[$systemname."successmsg"] = "User ".$data["fname"]." ".$data["lname"]." has been DEACTIVATED";
-               header("Location: index.php?view=".$page."");   
+               header("Location: ./?view=".$page."");   
 	die();	 
  }else{
 	$_SESSION[$systemname."errormsg"] = "Unknown Error";
-               header("Location: index.php?view=".$page."");   
+               header("Location: ./?view=".$page."");   
 	die(); 
  }
    }

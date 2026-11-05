@@ -26,7 +26,7 @@ $categories  = $cats_result ? $cats_result->fetch_all(MYSQLI_ASSOC) : [];
         <div class="heading-meta">
             <span class="meta-pill">
                 <i class="fa fa-house"></i>
-                <a href="index.php" style="text-decoration:none;color:inherit;">Home</a>
+                <a href="./" style="text-decoration:none;color:inherit;">Home</a>
             </span>
             <span class="meta-pill">
                 <i class="fa fa-book"></i>

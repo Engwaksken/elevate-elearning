@@ -26,7 +26,7 @@ if (
     !empty($_SESSION[$systemname . "loggedin"]) &&
     !empty($_SESSION[$systemname . "email"])
 ) {
-    header('Location: index.php');
+    header('Location: ./');
     exit;
 }
 
@@ -181,7 +181,7 @@ if (empty($_SESSION['forgot_password_csrf'])) {
                 <?php if ($alertClass === 'success'): ?>
                     <script>
                         setTimeout(function () {
-                            window.location.href = 'login.php';
+                            window.location.href = 'login';
                         }, 5000);
                     </script>
                 <?php endif; ?>
@@ -220,7 +220,7 @@ if (empty($_SESSION['forgot_password_csrf'])) {
                 </div>
 
                 <div class="auth-links">
-                    <a href="login.php">Return to Login</a>
+                    <a href="login">Return to Login</a>
                     <span>|</span>
                     <a href="../">Cancel</a>
                 </div>

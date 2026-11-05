@@ -5,7 +5,7 @@ require 'connector.php';
 
 if ( !isset($_GET['use'])){
 	
-	header("Location: ../index.php?view=home");
+	header("Location: ../?view=home");
 	die();
 	
 }else{
@@ -18,11 +18,11 @@ $fg="DELETE FROM `course_registration` WHERE `id`='".$use."'";
 
 	 if($re){
 		$_SESSION[$systemname."successmsg"] = "Course registration removed";
-              header("Location: ../index.php?view=change_course&id=".$lec);  
+              header("Location: ../?view=change_course&id=".$lec);  
 	die(); 	 
 	 }else{
 				$_SESSION[$systemname."errormsg"] = "Unknown error";
-             header("Location: ../index.php?view=change_course&id=".$lec);     
+             header("Location: ../?view=change_course&id=".$lec);     
 	die(); 
 			}
  

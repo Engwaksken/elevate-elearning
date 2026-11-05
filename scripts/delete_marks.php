@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->close();
         }
 
-        header("Location: ../index.php?view=subby&hjadvhagsdjhsagsdhg=$mymodule&piouglv=$assignment_id");
+        header("Location: ../?view=subby&hjadvhagsdjhsagsdhg=$mymodule&piouglv=$assignment_id");
         exit;
     } else {
         echo "Invalid input received.";

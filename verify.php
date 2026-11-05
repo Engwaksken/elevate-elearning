@@ -15,7 +15,7 @@ $pendingEmail  = $_SESSION['pending_verify_email'] ?? '';
 
 if ($pendingUserId <= 0 || $pendingEmail === '') {
     $_SESSION[$systemname . "errormsg"] = "Please login first to verify your account.";
-    header("Location: login.php");
+    header("Location: login");
     exit;
 }
 
@@ -180,7 +180,7 @@ $maskedEmail = preg_replace('/(^.).*(@.*$)/', '$1***$2', $pendingEmail);
     </form>
 
     <div class="auth-links" style="margin-top:14px;">
-        <a href="login.php">Back to Login</a>
+        <a href="login">Back to Login</a>
     </div>
 </div>
 

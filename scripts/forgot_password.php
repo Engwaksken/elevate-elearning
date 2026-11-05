@@ -12,7 +12,7 @@ $emailService = new EmailService();
 
 // Validate request
 if (!isset($_POST['email']) || !isset($_POST['forgot'])) {
-    header("Location: ../forgot_password.php");
+    header("Location: ../forgot_password");
     exit();
 }
 
@@ -26,7 +26,7 @@ $result = $checkUser->get_result();
 
 if ($result->num_rows < 1) {
     $_SESSION[$systemname . "errormsg"] = "Account $email not found";
-    header("Location: ../forgot_password.php");
+    header("Location: ../forgot_password");
     exit();
 }
 
@@ -48,7 +48,7 @@ $update->bind_param("sss", $newSalt, $hashedPW, $email);
 
 if (!$update->execute()) {
     $_SESSION[$systemname . "errormsg"] = "Failed to update the password. Please try again.";
-    header("Location: ../forgot_password.php");
+    header("Location: ../forgot_password");
     exit();
 }
 
@@ -92,7 +92,7 @@ $body = '
     <p>Please click the button below to log in and change it immediately:</p>
 
     <p style="text-align:center;">
-        <a href="' . $domainname . '/elearning/login.php?uopt=' . $oldSalt . '&email=' . $email . '"
+        <a href="' . $domainname . '/elearning/login?uopt=' . $oldSalt . '&email=' . $email . '"
             style="padding:12px 30px; background:#fc7f10; color:#fff; border-radius:50px; text-decoration:none;">
             Go to Login
         </a>
@@ -124,6 +124,6 @@ if ($sent) {
     $_SESSION[$systemname . "errormsg"] = "Email sending failed. Please contact support.";
 }
 
-header("Location: ../forgot_password.php");
+header("Location: ../forgot_password");
 exit();
 ?>

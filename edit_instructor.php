@@ -115,7 +115,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         );
 
         if ($updated) {
-            header("Location: index.php?view=edit_instructor&id="
+            header("Location: ./?view=edit_instructor&id="
                    . urlencode($lecturer_id) . "&updated=1");
             exit;
         }

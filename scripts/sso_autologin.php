@@ -107,7 +107,7 @@ function elevate_sso_is_verify_request(): bool
 function elevate_sso_verify_url(): string
 {
     $origin = eh_sso_request_origin();
-    return ($origin !== '' ? $origin : '') . '/elearning/verify.php';
+    return ($origin !== '' ? $origin : '') . '/elearning/verify';
 }
 
 function elevate_sso_continue_local_mfa(mysqli $conn, array $user, string $systemname): void

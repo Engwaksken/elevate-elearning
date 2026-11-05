@@ -80,7 +80,7 @@ $not_done_students = oneInt($conn,
   <!-- -- Stats strip -------------------------------------- -->
   <div class="dash-stats" style="margin-bottom:20px;">
 
-    <a href="index.php?view=my_students" class="dash-stat" style="text-decoration:none; cursor:pointer;">
+    <a href="./?view=my_students" class="dash-stat" style="text-decoration:none; cursor:pointer;">
       <div class="dash-stat-header">
         <span class="dash-stat-label">Total Students</span>
         <span class="dash-stat-tag dst-maroon"><i class="fas fa-users"></i></span>
@@ -89,7 +89,7 @@ $not_done_students = oneInt($conn,
       <div class="dash-stat-sub">All students in system</div>
     </a>
 
-    <a href="index.php?view=my_students" class="dash-stat" style="text-decoration:none; cursor:pointer;">
+    <a href="./?view=my_students" class="dash-stat" style="text-decoration:none; cursor:pointer;">
       <div class="dash-stat-header">
         <span class="dash-stat-label">My Students</span>
         <span class="dash-stat-tag dst-gold"><i class="fas fa-user-graduate"></i></span>
@@ -98,7 +98,7 @@ $not_done_students = oneInt($conn,
       <div class="dash-stat-sub">Enrolled in my courses</div>
     </a>
 
-    <a href="index.php?view=all_assignments" class="dash-stat" style="text-decoration:none; cursor:pointer;">
+    <a href="./?view=all_assignments" class="dash-stat" style="text-decoration:none; cursor:pointer;">
       <div class="dash-stat-header">
         <span class="dash-stat-label">Assignments</span>
         <span class="dash-stat-tag dst-maroon"><i class="fas fa-tasks"></i></span>

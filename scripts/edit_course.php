@@ -3,7 +3,7 @@ session_start();
 require 'connector.php';
 
 if ((!isset($_POST['course_name'])) || (!isset($_POST['course_code'])) || (!isset($_POST['update']))) {
-    header("Location: ../index.php?view=update_course");
+    header("Location: ../?view=update_course");
     die();
 } else {
     $course_name = strip_tags(trim($_POST['course_name']));
@@ -19,7 +19,7 @@ if ((!isset($_POST['course_name'])) || (!isset($_POST['course_code'])) || (!isse
 
     if ($check->num_rows == 0) {
         $_SESSION[$systemname . "errormsg"] = "Course with code '" . $course_code . "' does not exist.";
-        header("Location: ../index.php?view=update_course");
+        header("Location: ../?view=update_course");
         die();
     } else {
         // Prepare the update SQL statement
@@ -30,7 +30,7 @@ if ((!isset($_POST['course_name'])) || (!isset($_POST['course_code'])) || (!isse
 
         if ($result) {
             $_SESSION[$systemname . "successmsg"] = "Course '" . $course_name . "' has been updated.";
-            header("Location: ../index.php?view=update_course");
+            header("Location: ../?view=update_course");
             die();
         }
     }

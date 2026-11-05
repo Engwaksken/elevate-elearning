@@ -11,18 +11,18 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
     if ($stmt->execute()) {
       
         $_SESSION['flash_message'] = "Student deleted successfully";
-        header("Location: index.php?view=view_students");
+        header("Location: ./?view=view_students");
         exit;
     } else {
         $_SESSION['flash_message'] = "Error deleting student: " . $conn->error;
-        header("Location: index.php?view=view_students");
+        header("Location: ./?view=view_students");
         exit;
     }
 
     $stmt->close();
 } else {
     $_SESSION['flash_message'] = "Invalid request.";
-    header("Location: index.php?view=view_students");
+    header("Location: ./?view=view_students");
     exit;
 }
 

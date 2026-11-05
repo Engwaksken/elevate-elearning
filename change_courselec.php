@@ -10,7 +10,7 @@ echo'<table border="0" cellpadding="0" cellspacing="0" style="width: 100%;">
       </tbody>
     </table> ';
   
-              // header("Location: index.php?home");	
+              // header("Location: ./?home");	
 }else{
 ?>
 <div class="row wrapper border-bottom white-bg page-heading">
@@ -104,7 +104,7 @@ if ($dpc=="default.jpg"){
 		
 				echo'<div class="">
                 <div class="contact-box">
-                    <a href="index.php?view=profile">
+                    <a href="./?view=profile">
                     <div class="col-sm-4">
                         <div class="text-center">
                             <img alt="image" class="img-circle m-t-xs img-responsive" '.$dpp.'>

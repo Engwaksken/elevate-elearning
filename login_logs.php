@@ -9,7 +9,7 @@ if (
     !isset($_SESSION[$systemname . 'loggedin']) ||
     $_SESSION[$systemname . 'loggedin'] === ''
 ) {
-    header('Location: login.php');
+    header('Location: login');
     exit;
 }
 
@@ -17,7 +17,7 @@ $role = $_SESSION[$systemname . 'letype'] ?? '';
 
 if (!in_array($role, ['sabrtw', 'xybrtw'], true)) {
     $_SESSION[$systemname . 'errormsg'] = 'You do not have permission to access Login Logs.';
-    header('Location: index.php');
+    header('Location: ./');
     exit;
 }
 
@@ -177,7 +177,7 @@ $available_courses = $courses_result ? $courses_result->fetch_all(MYSQLI_ASSOC) 
         <h2>User Login Logs</h2>
         <ol class="breadcrumb">
             <li>
-                <a href="index.php">Home</a>
+                <a href="./">Home</a>
             </li>
             <li class="active">
                 <strong>Login Logs</strong>

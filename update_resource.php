@@ -64,7 +64,7 @@ if (!$course_id) {
                         $stmt->close();
                         $conn->close();
                         // Redirect to prevent form resubmission
-                        header("Location: index.php?view=online_class&updated=1");
+                        header("Location: ./?view=online_class&updated=1");
                         exit;
                     } else {
                         $error_message = "No changes were made or course not found.";
@@ -116,7 +116,7 @@ $conn->close();
         <h2>Update Other Resources</h2>
         <ol class="breadcrumb">
             <li>
-                <a href="index.php">Home</a>
+                <a href="./">Home</a>
             </li>
             <li>
                 <a href="?view=other_resources">Other Resources</a>
@@ -236,7 +236,7 @@ $conn->close();
 
                                 <div class="form-group pt-3">
                                     <div class="d-flex justify-content-between">
-                                        <a href="index.php?view=online_class" class="btn btn-secondary">
+                                        <a href="./?view=online_class" class="btn btn-secondary">
                                             <i class="fas fa-times"></i> Cancel
                                         </a>
                                         <button type="submit" class="btn btn-primary">
@@ -253,7 +253,7 @@ $conn->close();
                                 <p class="text-muted">
                                     <?php echo !empty($error_message) ? $error_message : 'The requested Resource could not be found.'; ?>
                                 </p>
-                                <a href="index.php?view=online_class" class="btn btn-primary">
+                                <a href="./?view=online_class" class="btn btn-primary">
                                     <i class="fas fa-arrow-left"></i> Back to Course List
                                 </a>
                             </div>

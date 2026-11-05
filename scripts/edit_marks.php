@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'], $_POST['marks']
         $stmt->execute();
 
         // Redirect back to previous page with module and assignment IDs
-        header("Location: ../index.php?view=subby&hjadvhagsdjhsagsdhg=$mymodule&piouglv=$assignment_id");
+        header("Location: ../?view=subby&hjadvhagsdjhsagsdhg=$mymodule&piouglv=$assignment_id");
         exit;
     } catch (Exception $e) {
         die("Database error: " . $e->getMessage());

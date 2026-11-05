@@ -38,7 +38,7 @@ function setErrorAndRedirect(string $message, string $systemname): never
         $_SESSION['old_input'] = $_POST;
     }
 
-    header('Location: ../create_student.php');
+    header('Location: ../create_student');
     exit;
 }
 
@@ -50,7 +50,7 @@ function setSuccessAndRedirect(string $message, string $systemname): never
 
     unset($_SESSION['old_input']);
 
-    header('Location: ../create_student.php');
+    header('Location: ../create_student');
     exit;
 }
 

@@ -56,9 +56,9 @@ while ($d = $res->fetch_assoc()) {
     }
 
     if (($d["verified"] ?? '') === "yes") {
-        $ver = '<a href="deactivate.php?id=' . urlencode($d["unique_id"]) . '"><span class="label label-primary">Active</span></a>';
+        $ver = '<a href="deactivate?id=' . urlencode($d["unique_id"]) . '"><span class="label label-primary">Active</span></a>';
     } else {
-        $ver = '<a href="activate.php?id=' . urlencode($d["unique_id"]) . '"><span class="label label-info">Not Active</span></a>';
+        $ver = '<a href="activate?id=' . urlencode($d["unique_id"]) . '"><span class="label label-info">Not Active</span></a>';
     }
 
     $chatter = '';

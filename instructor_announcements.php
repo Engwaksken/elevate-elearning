@@ -7,7 +7,7 @@ $emailService = new EmailService();
 if (session_status() === PHP_SESSION_NONE) session_start();
 
 if (!isset($_SESSION[$systemname . "leido"])) {
-    header("Location: login.php");
+    header("Location: login");
     exit();
 }
 
@@ -47,7 +47,7 @@ if (isset($_GET['delete_id'])) {
         $_SESSION['errormsg'] = "You don't have permission to delete this announcement.";
     }
 
-    header("Location: index.php?view=my_announcements");
+    header("Location: ./?view=my_announcements");
     exit();
 }
 
@@ -67,13 +67,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         if (!eh_upload_extension_allowed((string)$_FILES['post_image']['name'], ['jpg', 'jpeg', 'png', 'gif', 'webp'])
             || !@getimagesize($_FILES['post_image']['tmp_name'])) {
             $_SESSION['errormsg'] = "Only image files (JPG, PNG, GIF or WebP) can be uploaded.";
-            header("Location: index.php?view=my_announcements");
+            header("Location: ./?view=my_announcements");
             exit();
         }
         $target_file = $target_dir . eh_random_upload_name((string)$_FILES['post_image']['name'], 'ann_');
         if (!move_uploaded_file($_FILES['post_image']['tmp_name'], $target_file)) {
             $_SESSION['errormsg'] = "Error uploading file.";
-            header("Location: index.php?view=my_announcements");
+            header("Location: ./?view=my_announcements");
             exit();
         }
         eh_compress_upload($target_file);
@@ -156,7 +156,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
     }
 
-    header("Location: index.php?view=my_announcements");
+    header("Location: ./?view=my_announcements");
     exit();
 }
 
@@ -265,7 +265,7 @@ $flash_error   = $_SESSION['errormsg']   ?? null; unset($_SESSION['errormsg']);
   <div class="topbar-left">
     <h1><i class="fas fa-bullhorn"></i> <?php echo htmlspecialchars($systemname) ?> &mdash; Announcements</h1>
     <ol class="breadcrumb">
-      <li><a href="index.php"><i class="fas fa-home"></i> Home</a></li>
+      <li><a href="./"><i class="fas fa-home"></i> Home</a></li>
       <li class="active">Manage Announcements</li>
     </ol>
   </div>

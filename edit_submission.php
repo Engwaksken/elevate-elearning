@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($stmt->execute()) {
         // Redirect using the dynamic course_id
-        header("Location: ../elearning/index.php?view=all_assignments&course_id=$course_id&msg=updated");
+        header("Location: ../elearning/?view=all_assignments&course_id=$course_id&msg=updated");
         exit;
     } else {
         $error = "Failed to update submission.";
@@ -85,7 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 
     <button type="submit" class="btn btn-primary">Update Submission</button>
-    <a href="index.php?view=all_assignments" class="btn btn-secondary">Cancel</a>
+    <a href="./?view=all_assignments" class="btn btn-secondary">Cancel</a>
 </form>
 
 

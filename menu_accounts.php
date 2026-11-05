@@ -20,7 +20,7 @@ $view = isset($_GET['view']) ? $_GET['view'] : '';
                             <li><a href="?view=edit_profile">Edit Profile</a></li>
                             <li><a href="?view=change_pic">Change D-pic</a></li>
                             <li class="divider"></li>
-                            <li><a href="logout.php">Logout</a></li>
+                            <li><a href="logout">Logout</a></li>
                         </ul>
                     </div>
                     <div class="logo-element">

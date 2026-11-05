@@ -12,7 +12,7 @@ if (((isset($_SESSION[$systemname."loggedin"]))&&($_SESSION[$systemname."loggedi
 	$unik=strip_tags(trim($_SESSION[$systemname."leido"] ?? ''));
 	
 	if ($unik == '') {
-		header('Location: logout.php');
+		header('Location: logout');
 		die();
 	}
 	
@@ -20,7 +20,7 @@ if (((isset($_SESSION[$systemname."loggedin"]))&&($_SESSION[$systemname."loggedi
 	$check = $conn->query($checksystem)or die (mysqli_error($conn));
 
 	if ($check->num_rows < 1) {
-		header('Location: logout.php');
+		header('Location: logout');
 		die();	
 	}else{
 		$data= mysqli_fetch_array($check);
@@ -61,7 +61,7 @@ if (((isset($_SESSION[$systemname."loggedin"]))&&($_SESSION[$systemname."loggedi
 
 			$_SESSION[$systemname."errormsg"] = "Please verify your login before accessing the dashboard.";
 
-			header('Location: verify.php');
+			header('Location: verify');
 			die();
 		}
 
@@ -100,7 +100,7 @@ if (((isset($_SESSION[$systemname."loggedin"]))&&($_SESSION[$systemname."loggedi
 	
 	
 }else{
-	header('Location: login.php');
+	header('Location: login');
 	die();	
 }
 ?>
@@ -196,7 +196,7 @@ if (((isset($_SESSION[$systemname."loggedin"]))&&($_SESSION[$systemname."loggedi
                
 
                 <li>
-                    <a href="logout.php">
+                    <a href="logout">
                         <i class="fa fa-sign-out"></i> Log out
                     </a>
                 </li>

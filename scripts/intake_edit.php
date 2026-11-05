@@ -4,7 +4,7 @@
                     <h2><?php echo $systemname?> Courses</h2>
                     <ol class="breadcrumb">
                         <li>
-                            <a href="index.php">Home</a>
+                            <a href="./">Home</a>
                         </li>
                         <li>
                             <a>Courses</a>

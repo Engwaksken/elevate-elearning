@@ -456,7 +456,7 @@ try {
         if ($studentEmail !== '' && $emailService !== null) {
            
             $credentialUrl = rtrim((new EmailService())->getDomainName(), '/')
-                           . '/elearning/index.php?view=my_certificate&cert='
+                           . '/elearning/?view=my_certificate&cert='
                            . urlencode($certificateNo);
 
             $sent = $emailService->sendCertificateEmail(

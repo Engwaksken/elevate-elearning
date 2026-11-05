@@ -442,7 +442,7 @@ if ($cts) while ($r = $cts->fetch_assoc()) $classTypes[] = $r;
   function exportData(type) {
     var form    = document.createElement('form');
     form.method = 'POST';
-    form.action = 'load_students.php';
+    form.action = 'load_students';
     form.style.display = 'none';
 
     var params = buildParams({ export: type });

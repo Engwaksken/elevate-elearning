@@ -4,7 +4,7 @@ require 'connector.php';
 
 // Check if required parameters exist
 if (!isset($_GET['find']) || !isset($_GET['zambezia']) || !isset($_GET['bengani'])) {
-    header("Location: ../index.php");
+    header("Location: ../");
     exit();
 }
 
@@ -16,7 +16,7 @@ $targetDir = "../assignments/agjashdbsjdhkhsdvfh/";
 
 // Check session variables
 if (!isset($_SESSION[$systemname."letype"]) || !isset($_SESSION[$systemname."leido"])) {
-    header("Location: ../index.php");
+    header("Location: ../");
     exit();
 }
 
@@ -31,7 +31,7 @@ $result = $stmt->get_result();
 
 if ($result->num_rows < 1) {
     $_SESSION[$systemname."errormsg"] = "Invalid Request";
-    header("Location: ../index.php?view=home");
+    header("Location: ../?view=home");
     exit();
 }
 
@@ -48,7 +48,7 @@ if ($accType == "xybrtw") {
 } else {
     // Unknown account type
     $_SESSION[$systemname."errormsg"] = "Invalid account type";
-    header("Location: ../index.php");
+    header("Location: ../");
     exit();
 }
 

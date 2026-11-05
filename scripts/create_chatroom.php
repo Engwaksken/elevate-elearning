@@ -4,7 +4,7 @@ require 'connector.php';
 
 if ( (!isset($_POST['name']))||(!isset($_POST['code']))||(!isset($_POST['create']))){
 	
-	header("Location: ../index.php?view=create_chatroom");
+	header("Location: ../?view=create_chatroom");
 	die();
 	
 }else{
@@ -21,12 +21,12 @@ $checksystem = "SELECT * FROM chatroom WHERE chatroom_name = '" . $name. "'";
  $check = $conn->query($checksystem)or die (mysqli_error());
  if ($check->num_rows > 0) {
 $_SESSION[$systemname."errormsg"] = "Chatroom '". $name."' already exists";
-               header("Location: ../index.php?view=create_chatroom");   
+               header("Location: ../?view=create_chatroom");   
 	die(); 
  
    }else if ($cv->num_rows > 0) {
 $_SESSION[$systemname."errormsg"] = "Chatroom  with CODE '". $code."' and PASS '".$pass."' already exists";
-               header("Location: ../index.php?view=create_chatroom");   
+               header("Location: ../?view=create_chatroom");   
 	die(); 
  
    }else{
@@ -36,7 +36,7 @@ $_SESSION[$systemname."errormsg"] = "Chatroom  with CODE '". $code."' and PASS '
             
             if($result){
 		$_SESSION[$systemname."successmsg"] = "Chatroom '". $name."' has been created";
-               header("Location: ../index.php?view=create_chatroom");   
+               header("Location: ../?view=create_chatroom");   
 	die(); 		
 			}
    }

@@ -775,7 +775,7 @@ if (in_array($file_ext, ['pdf'])) {
 <div class="sd-wrap">
 
   <div class="sd-breadcrumb">
-    <a href="index.php?view=my_assignment<?= $selected_course_id ? '&course_id=' . $selected_course_id : ''; ?>">
+    <a href="./?view=my_assignment<?= $selected_course_id ? '&course_id=' . $selected_course_id : ''; ?>">
       <i class="fas fa-arrow-left"></i> My Assignments
     </a>
     <span class="sep">/</span>
@@ -1009,7 +1009,7 @@ if (in_array($file_ext, ['pdf'])) {
           </div>
 
           <div class="sd-file-actions">
-            <a href="index.php?view=download_file&submission_id=<?= (int)$row['submission_id']; ?>"
+            <a href="./?view=download_file&submission_id=<?= (int)$row['submission_id']; ?>"
                class="sd-btn sd-btn-primary">
               <i class="fas fa-download"></i> Download
             </a>
@@ -1041,7 +1041,7 @@ if (in_array($file_ext, ['pdf'])) {
   </div>
 
   <div class="sd-back-row">
-    <a href="index.php?view=my_assignment<?= $selected_course_id ? '&course_id=' . $selected_course_id : ''; ?>"
+    <a href="./?view=my_assignment<?= $selected_course_id ? '&course_id=' . $selected_course_id : ''; ?>"
        class="sd-btn sd-btn-secondary">
       <i class="fas fa-arrow-left"></i> Back to Assignments
     </a>

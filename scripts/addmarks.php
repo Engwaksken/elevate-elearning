@@ -4,7 +4,7 @@ require 'connector.php';
 
 
 if (!isset($_POST['theaid'], $_POST['theass'], $_POST['themod'], $_POST['marks'])) {
-    header("Location: ../index.php?view=home");
+    header("Location: ../?view=home");
     exit;
 }
 
@@ -44,6 +44,6 @@ if ($stmt) {
     $_SESSION[$systemname . "successmsg"] = "Process failed (DB error)";
 }
 
-header("Location: ../index.php?view=subby&hjadvhagsdjhsagsdhg=" . urlencode($themod) . "&piouglv=" . urlencode($theass));
+header("Location: ../?view=subby&hjadvhagsdjhsagsdhg=" . urlencode($themod) . "&piouglv=" . urlencode($theass));
 exit;
 ?>

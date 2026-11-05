@@ -30,3 +30,37 @@
 <IfModule mod_alias.c>
     RedirectMatch 404 ^/(.*/)?(\.git|_maintenance|scripts/cli)(/|$)
 </IfModule>
+
+# -----------------------------------------------------------------------------
+# Clean URLs: /login instead of /login.php, / instead of /index.php
+# Works at the domain root or in a subfolder (e.g. /elearning/), no RewriteBase.
+# -----------------------------------------------------------------------------
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # 1) Address-bar visits to an old ".php" URL get a permanent redirect to the
+    #    clean URL (query string kept). Only real page navigations are redirected
+    #    (GET/HEAD with "Sec-Fetch-Mode: navigate"), so form posts (POST) and
+    #    background requests (fetch/AJAX) are never redirected and never lose data.
+    #    scripts/ and vendor/ are left alone.
+
+    #    index.php -> folder URL
+    RewriteCond %{REQUEST_METHOD} ^(GET|HEAD)$
+    RewriteCond %{HTTP:Sec-Fetch-Mode} =navigate
+    RewriteCond %{THE_REQUEST} \s(/(?!(?:[^?\s]*/)?(?:scripts|vendor)/)(?:[^?\s]*/)?)index\.php[?\s]
+    RewriteRule ^ %1 [R=301,NE,L]
+
+    #    page.php -> page   (skipped when a folder has the same name, e.g. announcements/)
+    RewriteCond %{REQUEST_METHOD} ^(GET|HEAD)$
+    RewriteCond %{HTTP:Sec-Fetch-Mode} =navigate
+    RewriteCond %{REQUEST_FILENAME} ^(.+)\.php$
+    RewriteCond %1 !-d
+    RewriteCond %{THE_REQUEST} \s(/(?!(?:[^?\s]*/)?(?:scripts|vendor)/)[^?\s]*?)\.php[?\s]
+    RewriteRule ^ %1 [R=301,NE,L]
+
+    # 2) Serve /page from page.php when no real file or folder has that name.
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME}.php -f
+    RewriteRule ^([^.]+)$ $1.php [L]
+</IfModule>

@@ -4,7 +4,7 @@ require 'scripts/connector.php';
 
 if ( !isset($_GET['id'])){
 	
-	header("Location: index.php?view=view_students");
+	header("Location: ./?view=view_students");
 	die();
 	
 }else{
@@ -14,7 +14,7 @@ $checksystem = "SELECT * FROM users WHERE unique_id = '" . $uid. "'";
  $check = $conn->query($checksystem)or die (mysqli_error());
  if ($check->num_rows < 1) {
 $_SESSION[$systemname."errormsg"] = "Invalid User";
-               header("Location: index.php?view=".$page."");   
+               header("Location: ./?view=".$page."");   
 	die(); 
 
   
@@ -27,11 +27,11 @@ $_SESSION[$systemname."errormsg"] = "Invalid User";
  $qq = $conn->query($q)or die (mysqli_error());
  if($qq){
 $_SESSION[$systemname."successmsg"] = "User ".$data["fname"]." ".$data["lname"]." has been ACTIVATED";
-               header("Location: index.php?view=".$page."");   
+               header("Location: ./?view=".$page."");   
 	die();	 
  }else{
 	$_SESSION[$systemname."errormsg"] = "Unknown Error";
-               header("Location: index.php?view=".$page."");   
+               header("Location: ./?view=".$page."");   
 	die(); 
  }
    }

@@ -14,7 +14,7 @@ date_default_timezone_set('Africa/Nairobi');
 function back_msg(string $msg, string $type = "errormsg"): void {
     global $systemname;
     $_SESSION[$systemname . $type] = $msg;
-    header("Location: ../index.php?view=certificate_templates");
+    header("Location: ../?view=certificate_templates");
     exit;
 }
 

@@ -10,7 +10,7 @@ $nowdate    = $nowdate ?? date('Y-m-d H:i:s');
 function goBack(string $uid, string $msg, string $type = 'errormsg'): never {
     global $systemname;
     $_SESSION[$systemname . $type] = $msg;
-    header("Location: ../index.php?view=change_course&id=" . urlencode($uid));
+    header("Location: ../?view=change_course&id=" . urlencode($uid));
     exit;
 }
 

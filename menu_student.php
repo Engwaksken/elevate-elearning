@@ -67,7 +67,7 @@ $libraryUrl    = 'https://library.elevateher360.org/';
                         </li>
                         <li class="divider"></li>
                         <li>
-                            <a href="logout.php">
+                            <a href="logout">
                                 <i class="fa fa-sign-out"></i> Logout
                             </a>
                         </li>
@@ -76,7 +76,7 @@ $libraryUrl    = 'https://library.elevateher360.org/';
             </li>
 
             <li<?= sidebar_active($view, ['home']); ?>>
-                <a href="index.php">
+                <a href="./">
                     <i class="fa fa-home"></i>
                     <span class="nav-label">Home</span>
                 </a>

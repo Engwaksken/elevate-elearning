@@ -5,7 +5,7 @@ require 'connector.php';
 
 if ( !isset($_GET['use'])){
 	
-	header("Location: ../index.php?view=home");
+	header("Location: ../?view=home");
 	die();
 	
 }else{
@@ -18,11 +18,11 @@ $fg="DELETE FROM `course_registration_lecturers` WHERE `id`='".$use."'";
 
 	 if($re){
 		$_SESSION[$systemname."successmsg"] = "Course module removed";
-              header("Location: ../index.php?view=change_courselec&id=".$lec);  
+              header("Location: ../?view=change_courselec&id=".$lec);  
 	die(); 	 
 	 }else{
 				$_SESSION[$systemname."errormsg"] = "Unknown error";
-            header("Location: ../index.php?view=change_courselec&id=".$lec);     
+            header("Location: ../?view=change_courselec&id=".$lec);     
 	die(); 
 			}
  

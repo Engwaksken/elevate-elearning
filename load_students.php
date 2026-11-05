@@ -164,8 +164,8 @@ if (empty($students)) {
         // Status toggle
         $isActive    = ($d['verified'] === 'yes');
         $statusLabel = $isActive
-            ? '<a href="deactivate.php?id=' . $stdId . '&xts=view_students"><span class="label label-primary">Active</span></a>'
-            : '<a href="activate.php?id='   . $stdId . '&xts=view_students"><span class="label label-info">Not Active</span></a>';
+            ? '<a href="deactivate?id=' . $stdId . '&xts=view_students"><span class="label label-primary">Active</span></a>'
+            : '<a href="activate?id='   . $stdId . '&xts=view_students"><span class="label label-info">Not Active</span></a>';
 
         // Action links
         $editLink   = '<a href="?view=edit_student&id='  . $stdId . '"><span class="label label-warning">Edit</span></a>';

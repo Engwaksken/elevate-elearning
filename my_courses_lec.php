@@ -1,6 +1,6 @@
 <?php
 if (session_status() === PHP_SESSION_NONE) session_start();
-if (!isset($_SESSION[$systemname . "leido"])) { header("Location: login.php"); exit(); }
+if (!isset($_SESSION[$systemname . "leido"])) { header("Location: login"); exit(); }
 
 $user_id = $_SESSION[$systemname . "leido"];
 

@@ -11,7 +11,7 @@ if (!isset($systemname) || trim($systemname) === '') {
 function back_error($msg) {
     global $systemname;
     $_SESSION[$systemname . "errormsg"] = $msg;
-    header("Location: ../login.php");
+    header("Location: ../login");
     exit;
 }
 
@@ -99,7 +99,7 @@ function send_code(mysqli $conn, array $user) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header("Location: ../login.php");
+    header("Location: ../login");
     exit;
 }
 
@@ -162,7 +162,7 @@ if (!$user || !password_ok($password, (string)$user['password'], (string)($user[
 }
 
 if (!empty($_SESSION[$systemname . 'loggedin']) && !empty($_SESSION['loggedin'])) {
-    header("Location: ../index.php");
+    header("Location: ../");
     exit;
 }
 
@@ -194,5 +194,5 @@ if (!send_code($conn, $user)) {
 $_SESSION['verify_flash_type'] = "success";
 $_SESSION['verify_flash_msg'] = "A verification code has been sent to your email.";
 
-header("Location: ../verify.php");
+header("Location: ../verify");
 exit;

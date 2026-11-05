@@ -4,7 +4,7 @@ require 'connector.php';
 
 if ( (!isset($_POST['course']))||(!isset($_POST['changecourse']))){
 	
-	header("Location: ../index.php?view=change_courselec&id=".$_POST['pjk']."");
+	header("Location: ../?view=change_courselec&id=".$_POST['pjk']."");
 	die();
 	
 }else{
@@ -16,7 +16,7 @@ $pc = strip_tags(trim($_POST['pc']));
 if($uid==""){
 	
 	
-	header("Location: ../index.php?view=change_courselec&id=".$_POST['pjk']."");
+	header("Location: ../?view=change_courselec&id=".$_POST['pjk']."");
 	die();
 	
 
@@ -40,12 +40,12 @@ $check = $conn->query($query)or die (mysqli_error());
 if ($check) {
     $_SESSION[$systemname."successmsg"] = "Course module Added";
   
-               	header("Location: ../index.php?view=change_courselec&id=".$_POST['pjk']."");
+               	header("Location: ../?view=change_courselec&id=".$_POST['pjk']."");
   
 }else{
 $_SESSION[$systemname."errormsg"] = "Course Module not Added";
   
-               	header("Location: ../index.php?view=change_courselec&id=".$_POST['pjk']."");	
+               	header("Location: ../?view=change_courselec&id=".$_POST['pjk']."");	
 }
 	
 }

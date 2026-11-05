@@ -34,7 +34,7 @@ if (isset($_GET['id']) && !empty(trim($_GET['id']))) {
         $conn->close();
 
        
-        header("Location: ../index.php?view=view_students&msg=Student+deleted+successfully");
+        header("Location: ../?view=view_students&msg=Student+deleted+successfully");
         exit;
 
     } catch (Exception $e) {

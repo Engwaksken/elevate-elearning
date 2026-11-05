@@ -172,10 +172,10 @@ $result = $stmt->get_result();
                     <?php endif; ?>
                 </td>
                 <td>
-                    <a href="index.php?view=edit_submission&course_id=<?= $row['course_unit']; ?>&id=<?= $row['submission_id']; ?>" class="btn btn-sm btn-info" title="Edit">
+                    <a href="./?view=edit_submission&course_id=<?= $row['course_unit']; ?>&id=<?= $row['submission_id']; ?>" class="btn btn-sm btn-info" title="Edit">
                         <i class="fas fa-edit"></i>
                     </a>
-                    <a href="index.php?view=delete_submission&course_id=<?= $row['course_unit']; ?>&id=<?= $row['submission_id']; ?>" 
+                    <a href="./?view=delete_submission&course_id=<?= $row['course_unit']; ?>&id=<?= $row['submission_id']; ?>" 
                        class="btn btn-sm btn-danger ms-1" 
                        onclick="return confirm('Are you sure you want to delete this submission?');" 
                        title="Delete">

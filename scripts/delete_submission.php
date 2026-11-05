@@ -9,14 +9,14 @@ $systemname = 'Elevate Her 360';
 
 if (empty($_SESSION[$systemname . "loggedin"]) || empty($_SESSION[$systemname . "email"])) {
     $_SESSION['error_msg'] = "Please log in.";
-    header("Location: ../index.php");
+    header("Location: ../");
     exit;
 }
 
 $lecturer_id = trim((string)($_SESSION[$systemname . "leido"] ?? ''));
 if ($lecturer_id === '') {
     $_SESSION['error_msg'] = "Invalid session.";
-    header("Location: ../index.php");
+    header("Location: ../");
     exit;
 }
 
@@ -27,7 +27,7 @@ $mymodule      = isset($_POST['mymodule']) ? (int)$_POST['mymodule'] : 0;
 
 if ($submission_id <= 0) {
     $_SESSION['error_msg'] = "Invalid submission.";
-    header("Location: ../index.php");
+    header("Location: ../");
     exit;
 }
 
@@ -46,7 +46,7 @@ $chk->close();
 
 if (!$row) {
     $_SESSION['error_msg'] = "Submission not found or not allowed.";
-    header("Location: ../index.php");
+    header("Location: ../");
     exit;
 }
 
@@ -60,5 +60,5 @@ $del->close();
 $_SESSION['success_msg'] = "Submission deleted successfully.";
 
 
-header("Location: ../index.php?view=subby&hjadvhagsdjhsagsdhg=$mymodule&piouglv=$assignment_id");
+header("Location: ../?view=subby&hjadvhagsdjhsagsdhg=$mymodule&piouglv=$assignment_id");
 exit;

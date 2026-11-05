@@ -27,7 +27,7 @@ $course_count   = $courses_result ? $courses_result->num_rows : 0;
         <div class="heading-meta">
             <span class="meta-pill">
                 <i class="fa fa-house"></i>
-                <a href="index.php" style="text-decoration:none;color:inherit;">Home</a>
+                <a href="./" style="text-decoration:none;color:inherit;">Home</a>
             </span>
             <span class="meta-pill"><i class="fa fa-book"></i> Courses</span>
             <span class="meta-pill" style="background:var(--maroon-dim);color:var(--maroon);border-color:rgba(122,25,25,.18);">

@@ -124,7 +124,7 @@ $conn->close();
         <h2>Add Other Resources</h2>
         <ol class="breadcrumb">
             <li>
-                <a href="index.php">Home</a>
+                <a href="./">Home</a>
             </li>
             <li>
                 <a href="?view=other_resources">Other Resources</a>

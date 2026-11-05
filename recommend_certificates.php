@@ -658,7 +658,7 @@ function build_student_link(int $course_id, int $intake_id, string $search, int 
                                                 <i class="fa fa-eye"></i>
                                             </button>
                                             <a class="ia-btn ia-dl" title="Download certificate"
-                                               href="certificate.php?id=<?= $certId; ?>&amp;action=download">
+                                               href="certificate?id=<?= $certId; ?>&amp;action=download">
                                                 <i class="fa fa-download"></i>
                                             </a>
                                         <?php endif; ?>

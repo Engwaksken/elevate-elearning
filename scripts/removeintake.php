@@ -5,7 +5,7 @@ require 'connector.php';
 
 if ( (!isset($_GET['intake']))||(!isset($_GET['vf']))){
 	
-	header("Location: ../index.php?view=intakes");
+	header("Location: ../?view=intakes");
 	die();
 	
 }else{
@@ -33,11 +33,11 @@ $checksystemxx = "SELECT * FROM `intakes` WHERE `id`='".$intake."'";
 			
 
 			$_SESSION[$systemname."successmsg"] = $name." ".$thetype." removed";
-               header("Location: ../index.php?view=".$vf."");   
+               header("Location: ../?view=".$vf."");   
 	die(); 			
 			}else{
 				$_SESSION[$systemname."errormsg"] = "Unknown error";
-               header("Location: ../index.php?view=".$vf."");   
+               header("Location: ../?view=".$vf."");   
 	die(); 
 			}
 

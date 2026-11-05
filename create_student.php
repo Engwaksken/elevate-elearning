@@ -518,7 +518,7 @@ if (empty($_SESSION['student_register_csrf'])) {
 
                     <div class="signup-footer">
                         Have an account?
-                        <a href="login.php">Login</a>
+                        <a href="login">Login</a>
                         &nbsp;|&nbsp;
                         <a href="../"><i class="fa fa-arrow-left"></i> Back</a>
                     </div>
@@ -594,12 +594,12 @@ $(function () {
 
             if (countdown <= 0) {
                 clearInterval(timer);
-                window.location.replace('login.php');
+                window.location.replace('login');
             }
         }, 1000);
 
         setTimeout(function () {
-            window.location.replace('login.php');
+            window.location.replace('login');
         }, 5000);
     <?php else: ?>
         $(".auth-alert").delay(5000).fadeTo(800, 0, function () {
