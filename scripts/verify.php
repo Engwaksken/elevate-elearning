@@ -6,6 +6,7 @@ session_start();
 require_once __DIR__ . "/connector.php";
 require_once __DIR__ . "/EmailService.php";
 require_once __DIR__ . "/sso_bridge.php";
+require_once __DIR__ . "/helpers.php";
 
 if (!isset($systemname) || trim((string)$systemname) === '') {
     $systemname = "Elevate Her 360";
@@ -51,6 +52,8 @@ function acc_type_to_legacy($accType): string
 
 function login_user_and_redirect(array $user, string $systemname): void
 {
+    global $conn;
+    logLoginAttempt($conn, (string)($user['email'] ?? ''), 'success');
     session_regenerate_id(true);
 
     $name = get_display_name($user);
@@ -219,6 +222,7 @@ $user = $result ? $result->fetch_assoc() : null;
 $stmt->close();
 
 if (!$user) {
+    logLoginAttempt($conn, $pendingEmail, 'failed');
     unset($_SESSION['pending_verify_user_id'], $_SESSION['pending_verify_email']);
     redirect_login("Verification session expired. Please login again.");
 }
@@ -248,10 +252,12 @@ if (strlen($code) !== 6) {
 }
 
 if (empty($user['verification_code']) || !hash_equals((string)$user['verification_code'], $code)) {
+    logLoginAttempt($conn, $pendingEmail, 'failed');
     flash_and_redirect('error', 'Invalid verification code.');
 }
 
 if (empty($user['verification_expires_at']) || strtotime((string)$user['verification_expires_at']) < time()) {
+    logLoginAttempt($conn, $pendingEmail, 'failed');
     flash_and_redirect('error', 'Verification code has expired. Please request a new one.');
 }
 

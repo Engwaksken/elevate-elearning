@@ -129,7 +129,7 @@ if (((isset($_SESSION[$systemname."loggedin"]))&&($_SESSION[$systemname."loggedi
 <link href="js/plugins/gritter/jquery.gritter.css" rel="stylesheet">
 <link href="css/animate.css" rel="stylesheet">
 <link href="css/style.css" rel="stylesheet">
-<link href="app.css" rel="stylesheet">
+<link href="app.css?v=<?php echo (int)filemtime(__DIR__ . '/app.css'); ?>" rel="stylesheet">
 
 <!-- jQuery -->
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>

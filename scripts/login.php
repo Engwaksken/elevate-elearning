@@ -3,6 +3,7 @@ session_start();
 
 require_once __DIR__ . "/connector.php";
 require_once __DIR__ . "/EmailService.php";
+require_once __DIR__ . "/helpers.php";
 
 if (!isset($systemname) || trim($systemname) === '') {
     $systemname = "Elevate Her 360";
@@ -107,10 +108,12 @@ $email = strtolower(trim($_POST['email'] ?? ''));
 $password = (string)($_POST['password'] ?? '');
 
 if ($email === '' || $password === '') {
+    logLoginAttempt($conn, $email, 'failed');
     back_error("Please enter both email and password.");
 }
 
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    logLoginAttempt($conn, $email, 'failed');
     back_error("Please enter a valid email address.");
 }
 
@@ -158,6 +161,7 @@ $user = $result ? $result->fetch_assoc() : null;
 $stmt->close();
 
 if (!$user || !password_ok($password, (string)$user['password'], (string)($user['salt'] ?? ''))) {
+    logLoginAttempt($conn, $email, 'failed');
     back_error("Invalid email or password.");
 }
 

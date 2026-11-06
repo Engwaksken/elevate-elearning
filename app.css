@@ -48,10 +48,19 @@ body { font-family: var(--font-sans); color: var(--text); }
 
 /* Login logs: shared application tokens, not page-specific inline styling. */
 .login-logs-page { color: var(--text); }
-.login-logs-page .ibox { border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-xs); overflow: hidden; }
-.login-logs-page .ibox-title { border-color: var(--border); }
-.login-logs-page .table { margin-bottom: 0; }
-.login-logs-page .table thead th { color: var(--maroon-dk); background: var(--surface2); }
+.login-logs-page .page-heading { padding: 18px 24px; background: var(--surface); border-bottom: 1px solid var(--border); }
+.login-logs-page .page-heading h2 { color: var(--maroon-dk); font-weight: 700; }
+.login-logs-page .wrapper-content { padding: 24px; }
+.login-logs-page .ibox { margin-bottom: 18px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-xs); overflow: hidden; }
+.login-logs-page .ibox-title { min-height: 44px; padding: 14px 18px; border-color: var(--border); background: var(--surface); }
+.login-logs-page .ibox-content { padding: 18px; }
+.login-logs-page .form-control { min-height: 38px; border-color: var(--border-dk); border-radius: var(--radius-sm); box-shadow: none; }
+.login-logs-page .btn-primary { background: var(--maroon); border-color: var(--maroon); }
+.login-logs-page .btn-default { color: var(--text); border-color: var(--border-dk); }
+.login-logs-page .table { margin-bottom: 0; background: var(--surface); }
+.login-logs-page .table thead th { color: var(--maroon-dk); background: var(--surface2); border-color: var(--border); }
+.login-logs-page .table td { border-color: var(--border); vertical-align: middle; }
+.login-logs-page .label-primary { background: var(--maroon); }
 .login-logs-page .pagination > .active > a { background: var(--maroon); border-color: var(--maroon); }
 .login-logs-page .pagination > li > a { color: var(--maroon); }
 .certificate-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 20px; padding: 8px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
@@ -67,6 +76,7 @@ body { font-family: var(--font-sans); color: var(--text); }
 .course-stat-card small { display: block; margin-top: 10px; color: var(--muted); }
 @media (max-width: 767px) {
   .login-logs-page .page-heading h2 { font-size: 22px; }
+  .login-logs-page .wrapper-content { padding: 14px; }
   .login-logs-page .table { min-width: 760px; }
 }
 
