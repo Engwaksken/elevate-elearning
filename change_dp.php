@@ -115,6 +115,7 @@ $currentDp = !empty($user['dp'])
 (function () {
   let cropper = null;
   let hasImageReady = false;
+  let imageLoadToken = 0;
 
   const image = document.getElementById('cropTarget');
   const inputImage = document.getElementById('inputImage');
@@ -151,12 +152,14 @@ $currentDp = !empty($user['dp'])
       cropper = null;
     }
     hasImageReady = false;
+    uploadBtn.disabled = true;
   }
 
-  function createCropper() {
-    destroyCropper();
+  function createCropper(token) {
+    if (token !== imageLoadToken || !image.complete || image.naturalWidth <= 0 || cropper) return;
 
-    cropper = new Cropper(image, {
+    let instance = null;
+    instance = new Cropper(image, {
       aspectRatio: 1,
       viewMode: 1,
       dragMode: 'move',
@@ -172,19 +175,32 @@ $currentDp = !empty($user['dp'])
       cropBoxResizable: true,
       checkCrossOrigin: false,
       ready: function () {
-        hasImageReady = true;
+        if (token === imageLoadToken && cropper === instance) {
+          hasImageReady = true;
+          uploadBtn.disabled = false;
+        }
       }
     });
+    cropper = instance;
   }
 
   function loadImage(src) {
+    const token = ++imageLoadToken;
     destroyCropper();
+    let started = false;
+
+    const startCropper = function () {
+      if (started || token !== imageLoadToken || !image.complete || image.naturalWidth <= 0) return;
+      started = true;
+      createCropper(token);
+    };
 
     image.onload = function () {
-      createCropper();
+      startCropper();
     };
 
     image.onerror = function () {
+      if (token !== imageLoadToken) return;
       destroyCropper();
       showResult('danger', 'Image failed to load. Please choose another image.');
     };
@@ -192,7 +208,7 @@ $currentDp = !empty($user['dp'])
     image.src = src;
 
     if (image.complete && image.naturalWidth > 0) {
-      createCropper();
+      startCropper();
     }
   }
 
