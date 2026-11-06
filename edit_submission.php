@@ -1,6 +1,11 @@
 <?php 
 session_start();
 require 'scripts/connector.php';
+require_once __DIR__ . '/scripts/course_content_helpers.php';
+
+// Staff may access all courses; instructors must own the submission's course.
+[$current_user_id, $current_role] = cc_current_user();
+cc_require_instructor_role($current_role);
 
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
     die("Invalid submission ID.");
@@ -10,10 +15,11 @@ $submission_id = (int)$_GET['id'];
 
 // Fetch submission details first to get course_id
 $stmt = $conn->prepare("
-    SELECT hi.*, CONCAT(u.fname, ' ', u.lname) AS student_name, a.title AS assignment_title, a.course_unit
+    SELECT hi.*, CONCAT(u.fname, ' ', u.lname) AS student_name, a.title AS assignment_title, a.course_unit, cu.course_id AS access_course_id
     FROM handed_in hi
     JOIN users u ON hi.user_id = u.unique_id
     JOIN assignments a ON hi.assignment_id = a.id
+    JOIN course_unit cu ON cu.id = a.course_unit
     WHERE hi.id = ?
 ");
 $stmt->bind_param("i", $submission_id);
@@ -26,6 +32,10 @@ if (!$submission) {
 }
 
 $course_id = $submission['course_unit'];
+if (!cc_check_instructor_course_access($conn, $current_user_id, $current_role, (int)$submission['access_course_id'])) {
+    http_response_code(403);
+    die("Access denied.");
+}
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
