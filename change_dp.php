@@ -109,7 +109,7 @@ $currentDp = !empty($user['dp'])
   </div>
 </main>
 
-<script src="css/plugins/cropper/cropper.min.js"></script>
+<script src="js/plugins/cropper/cropper.min.js"></script>
 
 <script>
 (function () {
@@ -148,7 +148,7 @@ $currentDp = !empty($user['dp'])
 
   function destroyCropper() {
     if (cropper) {
-      cropper.destroy();
+      window.jQuery(image).cropper('destroy');
       cropper = null;
     }
     hasImageReady = false;
@@ -157,31 +157,28 @@ $currentDp = !empty($user['dp'])
 
   function createCropper(token) {
     if (token !== imageLoadToken || !image.complete || image.naturalWidth <= 0 || cropper) return;
+    if (!window.jQuery || !window.jQuery.fn.cropper) {
+      showResult('danger', 'Image cropper failed to load. Refresh the page and try again.');
+      return;
+    }
 
-    let instance = null;
-    instance = new Cropper(image, {
+    window.jQuery(image).cropper({
       aspectRatio: 1,
-      viewMode: 1,
-      dragMode: 'move',
       autoCropArea: 0.9,
-      responsive: true,
-      background: false,
       preview: '.img-preview',
       movable: true,
+      resizable: true,
       zoomable: true,
       rotatable: true,
-      scalable: true,
-      cropBoxMovable: true,
-      cropBoxResizable: true,
-      checkCrossOrigin: false,
-      ready: function () {
-        if (token === imageLoadToken && cropper === instance) {
+      built: function () {
+        if (token === imageLoadToken) {
+          cropper = window.jQuery(image).data('cropper');
           hasImageReady = true;
           uploadBtn.disabled = false;
         }
       }
     });
-    cropper = instance;
+    cropper = window.jQuery(image).data('cropper') || null;
   }
 
   function loadImage(src) {
@@ -244,23 +241,23 @@ $currentDp = !empty($user['dp'])
   });
 
   document.getElementById('zoomIn').addEventListener('click', function () {
-    if (cropper && hasImageReady) cropper.zoom(0.1);
+    if (cropper && hasImageReady) window.jQuery(image).cropper('zoom', 0.1);
   });
 
   document.getElementById('zoomOut').addEventListener('click', function () {
-    if (cropper && hasImageReady) cropper.zoom(-0.1);
+    if (cropper && hasImageReady) window.jQuery(image).cropper('zoom', -0.1);
   });
 
   document.getElementById('rotateLeft').addEventListener('click', function () {
-    if (cropper && hasImageReady) cropper.rotate(-45);
+    if (cropper && hasImageReady) window.jQuery(image).cropper('rotate', -45);
   });
 
   document.getElementById('rotateRight').addEventListener('click', function () {
-    if (cropper && hasImageReady) cropper.rotate(45);
+    if (cropper && hasImageReady) window.jQuery(image).cropper('rotate', 45);
   });
 
   document.getElementById('resetCrop').addEventListener('click', function () {
-    if (cropper && hasImageReady) cropper.reset();
+    if (cropper && hasImageReady) window.jQuery(image).cropper('reset');
   });
 
   uploadBtn.addEventListener('click', function () {
@@ -269,26 +266,17 @@ $currentDp = !empty($user['dp'])
       return;
     }
 
-    let canvas = null;
-
+    let imageData = '';
     try {
-      canvas = cropper.getCroppedCanvas({
-        width: 500,
-        height: 500,
-        fillColor: '#ffffff',
-        imageSmoothingEnabled: true,
-        imageSmoothingQuality: 'high'
-      });
+      imageData = window.jQuery(image).cropper('getDataURL', {width: 500, height: 500}, 'image/png');
     } catch (e) {
-      canvas = null;
+      imageData = '';
     }
 
-    if (!canvas) {
+    if (!imageData) {
       showResult('danger', 'Could not crop image. Please choose another image.');
       return;
     }
-
-    const imageData = canvas.toDataURL('image/png');
 
     setLoading(true);
 
