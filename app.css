@@ -15,7 +15,7 @@
   --border:    #e1e5ea;
   --border-dk: #c8cdd5;
 
-  /* Typography — muted must NEVER be black */
+  /* Typography ï¿½ muted must NEVER be black */
   --text:       #222222;
   --muted:      #000000;
   --font-serif: 'Outfit', Georgia, serif;
@@ -46,6 +46,24 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: var(--font-sans); color: var(--text); }
 
+/* Login logs: shared application tokens, not page-specific inline styling. */
+.login-logs-page { color: var(--text); }
+.login-logs-page .ibox { border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-xs); overflow: hidden; }
+.login-logs-page .ibox-title { border-color: var(--border); }
+.login-logs-page .table { margin-bottom: 0; }
+.login-logs-page .table thead th { color: var(--maroon-dk); background: var(--surface2); }
+.login-logs-page .pagination > .active > a { background: var(--maroon); border-color: var(--maroon); }
+.login-logs-page .pagination > li > a { color: var(--maroon); }
+.certificate-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 20px; padding: 8px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
+.certificate-tab { appearance: none; border: 1px solid transparent; border-radius: var(--radius-sm); background: transparent; color: var(--muted); cursor: pointer; font-weight: 600; padding: 10px 14px; transition: var(--trans); }
+.certificate-tab:hover { background: var(--surface2); color: var(--maroon); }
+.certificate-tab.is-active { background: var(--maroon); color: #fff; }
+.certificate-tab-panel[hidden] { display: none !important; }
+@media (max-width: 767px) {
+  .login-logs-page .page-heading h2 { font-size: 22px; }
+  .login-logs-page .table { min-width: 760px; }
+}
+
 
 a      { color: inherit; }
 button { font-family: var(--font-sans); }
@@ -60,7 +78,7 @@ button { font-family: var(--font-sans); }
   min-height: 100vh;
 }
 /* -- 4. Topbar ----------------------------------------------- */
-/* background stays #5a0e0e (--maroon-dk) — no component rule changes it */
+/* background stays #5a0e0e (--maroon-dk) ï¿½ no component rule changes it */
 .topbar {
   background: var(--maroon-dk);
   border-bottom: 3px solid var(--gold);
@@ -484,10 +502,10 @@ textarea.form-input { resize: vertical; }
 .dash-stat-num { font-family: var(--font-serif); font-size: 2.1rem; color: var(--maroon); line-height: 1; }
 .dash-stat-sub { font-size: 1.5rem; color: var(--muted); margin-top: 2px; }
 
-/* Dash content card — white, never maroon background */
+/* Dash content card ï¿½ white, never maroon background */
 .dash-content-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-xs); overflow: hidden; margin-bottom: 20px; }
 
-/* Dash tab bar — light grey, overflow scrolls for many module tabs */
+/* Dash tab bar ï¿½ light grey, overflow scrolls for many module tabs */
 .dash-tab-bar {
   display: flex;
   border-bottom: 2px solid var(--border);
@@ -524,7 +542,7 @@ textarea.form-input { resize: vertical; }
 .module-panel-meta span { display: flex; align-items: center; gap: 4px; }
 .module-panel-meta i    { font-size: .65rem; }
 
-/* Sub-tab bar (Assignments | Notes) — full width */
+/* Sub-tab bar (Assignments | Notes) ï¿½ full width */
 .module-subtab-bar { display: flex; gap: 4px; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 5px; margin-bottom: 18px; width: 100%; }
 .module-subtab-bar .tab-btn { flex: 1; justify-content: center; }
 
@@ -903,7 +921,7 @@ table.chatroom-table td { padding: 11px 14px; color: var(--muted); vertical-alig
 
 
 /* ============================================================
-   20. Admin Private Chat — User Directory
+   20. Admin Private Chat ï¿½ User Directory
    ============================================================ */
 
 .dir-stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 22px; }
@@ -963,7 +981,7 @@ table.dir-table td { padding: 10px 14px; color: var(--muted); vertical-align: mi
 
 
 /* ============================================================
-   22. Lecturer Chatroom — extras
+   22. Lecturer Chatroom ï¿½ extras
    ============================================================ */
 
 .intake-chips { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }

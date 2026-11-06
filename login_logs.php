@@ -41,10 +41,32 @@ function runQuery(mysqli $conn, string $sql, string $types = '', array $params =
     }
 
     $stmt->bind_param($types, ...$params);
-    $stmt->execute();
-
-    return $stmt->get_result();
+    if (!$stmt->execute()) {
+        error_log('Login logs query failed: ' . $stmt->error);
+        $stmt->close();
+        return false;
+    }
+    $result = $stmt->get_result();
+    $stmt->close();
+    return $result;
 }
+
+// Older installations write ip/created_at while newer schemas use
+// ip_address/login_time. Resolve the actual columns once and alias them below.
+$loginLogColumns = [];
+$columnResult = $conn->query('SHOW COLUMNS FROM login_logs');
+if ($columnResult) {
+    while ($column = $columnResult->fetch_assoc()) $loginLogColumns[] = $column['Field'];
+}
+$timeColumn = in_array('login_time', $loginLogColumns, true) ? 'login_time' : 'created_at';
+$ipColumn = in_array('ip_address', $loginLogColumns, true) ? 'ip_address' : 'ip';
+if (!in_array($timeColumn, $loginLogColumns, true) || !in_array($ipColumn, $loginLogColumns, true)) {
+    error_log('Login logs table is missing a supported timestamp or IP column.');
+    echo '<div class="app-alert app-alert-danger">Login records are temporarily unavailable because the login log table is not configured correctly.</div>';
+    return;
+}
+$timeSql = '`' . $timeColumn . '`';
+$ipSql = '`' . $ipColumn . '`';
 
 function pagUrl(int $p): string
 {
@@ -113,19 +135,19 @@ if ($course_filter !== '') {
 
 // Range conditions on the raw column (index-friendly), never DATE(column).
 if ($range_from !== '') {
-    $where_parts[] = 'll.login_time >= ?';
+        $where_parts[] = "ll.$timeSql >= ?";
     $filter_params[] = $range_from;
     $filter_types .= 's';
 }
 
 if ($date_from !== '') {
-    $where_parts[] = 'll.login_time >= ?';
+    $where_parts[] = "ll.$timeSql >= ?";
     $filter_params[] = $date_from . ' 00:00:00';
     $filter_types .= 's';
 }
 
 if ($date_to !== '') {
-    $where_parts[] = 'll.login_time < ?';
+    $where_parts[] = "ll.$timeSql < ?";
     $filter_params[] = date('Y-m-d 00:00:00', strtotime($date_to . ' +1 day'));
     $filter_types .= 's';
 }
@@ -140,7 +162,7 @@ $stats_sql = "
         COALESCE(SUM(ll.status = 'success'), 0) AS successful,
         COALESCE(SUM(ll.status = 'failed'), 0)  AS failed,
         COALESCE(SUM(ll.status = 'error'), 0)   AS errors,
-        COALESCE(SUM(ll.login_time >= ?), 0)    AS today
+        COALESCE(SUM(ll.$timeSql >= ?), 0)    AS today
     FROM login_logs ll
     $where_clause
 ";
@@ -170,10 +192,10 @@ $data_sql = "
             WHERE cr2.user_id = u.unique_id
         ) AS course_name
     FROM (
-        SELECT ll.id, ll.email, ll.login_time, ll.ip_address, ll.status
+        SELECT ll.id, ll.email, ll.$timeSql AS login_time, ll.$ipSql AS ip_address, ll.status
         FROM login_logs ll
         $where_clause
-        ORDER BY ll.login_time DESC, ll.id DESC
+        ORDER BY ll.$timeSql DESC, ll.id DESC
         LIMIT ? OFFSET ?
     ) p
     -- one user per email, so duplicate user records never duplicate a log row
@@ -197,6 +219,7 @@ if ($date_from !== '' || $date_to !== '') {
 }
 ?>
 
+<div class="login-logs-page">
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
         <h2>User Login Logs</h2>
@@ -503,4 +526,5 @@ if ($date_from !== '' || $date_to !== '') {
         </div>
     </div>
 
+</div>
 </div>

@@ -65,7 +65,7 @@ echo '</select>
 
 
 $valid="no";
-if($_SESSION[$systemname."letype"]=="xybrtw"){
+if(in_array($_SESSION[$systemname."letype"] ?? '', ["sabrtw", "xybrtw"], true)){
     //for admin
         $valid="yes";
         

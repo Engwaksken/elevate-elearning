@@ -36,7 +36,7 @@ if (!isset($conn) || !($conn instanceof mysqli) || $conn->connect_errno) {
 $userId = trim((string)($_SESSION[$systemname.'leido'] ?? ''));
 $role   = trim((string)($_SESSION[$systemname.'letype'] ?? ''));
 
-if ($userId === '' || !in_array($role, ['xybrtw', 'xtfbry'], true)) {
+if ($userId === '' || !in_array($role, ['sabrtw', 'xybrtw', 'xtfbry'], true)) {
     echo '<div class="app-alert app-alert-danger">Access denied.</div>';
     return;
 }

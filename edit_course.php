@@ -13,7 +13,7 @@ $user_id   = $_SESSION[$systemname . "leido"]  ?? null;
 $user_type = $_SESSION[$systemname . "letype"] ?? null;
 
 // Validate user access
-if ($user_type === "xybrtw") {
+if (in_array($user_type, ["sabrtw", "xybrtw"], true)) {
     $valid = true; // Admin
 } elseif ($user_type === "xtfbry" && !empty($user_id)) {
     $stmt = $conn->prepare("SELECT 1 FROM course_registration_lecturers WHERE user_id = ? AND course_id = ? LIMIT 1");

@@ -87,7 +87,6 @@ $fullName = trim(($firstname ?? '') . ' ' . ($lastname ?? ''));
                 </a>
                 <ul class="nav nav-second-level collapse">
                     <li<?= is_active($view, ['all_branches', 'branches']); ?>><a href="?view=all_branches">View Branches</a></li>
-                    <li<?= is_active($view, ['add_branch']); ?>><a href="?view=add_branch">Add Branch</a></li>
                 </ul>
             </li>
 

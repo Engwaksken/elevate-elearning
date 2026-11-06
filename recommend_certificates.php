@@ -1,6 +1,7 @@
 <?php
 $role = $_SESSION[$systemname . "letype"] ?? '';
 $user_unique = $_SESSION[$systemname . "leido"] ?? '';
+$activeTab = in_array($_GET['tab'] ?? 'recommended', ['recommended', 'students', 'activity'], true) ? ($_GET['tab'] ?? 'recommended') : 'recommended';
 
 if (!in_array($role, ['sabrtw', 'xybrtw', 'xtfbry'], true)) {
     echo "<div class='app-alert app-alert-danger'><i class='fa fa-ban'></i> Access denied.</div>";
@@ -474,6 +475,13 @@ function build_student_link(int $course_id, int $intake_id, string $search, int 
     </div>
 </div>
 
+<div class="certificate-tabs" role="tablist" aria-label="Certificate recommendation sections">
+    <button type="button" role="tab" id="tab-recommended" aria-controls="panel-recommended" aria-selected="<?= $activeTab === 'recommended' ? 'true' : 'false'; ?>" class="certificate-tab <?= $activeTab === 'recommended' ? 'is-active' : ''; ?>" data-tab="recommended">Recommended per Course</button>
+    <button type="button" role="tab" id="tab-students" aria-controls="panel-students" aria-selected="<?= $activeTab === 'students' ? 'true' : 'false'; ?>" class="certificate-tab <?= $activeTab === 'students' ? 'is-active' : ''; ?>" data-tab="students">Filter Students</button>
+    <button type="button" role="tab" id="tab-activity" aria-controls="panel-activity" aria-selected="<?= $activeTab === 'activity' ? 'true' : 'false'; ?>" class="certificate-tab <?= $activeTab === 'activity' ? 'is-active' : ''; ?>" data-tab="activity">Certificate Activity — Views &amp; Downloads</button>
+</div>
+
+<section id="panel-recommended" class="certificate-tab-panel" role="tabpanel" aria-labelledby="tab-recommended" <?= $activeTab !== 'recommended' ? 'hidden' : ''; ?>>
 <!-- ===================== RECOMMENDED PER COURSE ===================== -->
 <div class="section-header">
     <h2><i class="fa fa-graduation-cap"></i> Recommended per Course</h2>
@@ -498,6 +506,8 @@ function build_student_link(int $course_id, int $intake_id, string $search, int 
     </div>
 <?php endif; ?>
 
+ </section>
+<section id="panel-students" class="certificate-tab-panel" role="tabpanel" aria-labelledby="tab-students" <?= $activeTab !== 'students' ? 'hidden' : ''; ?>>
 <!-- ===================== STUDENT FILTER ===================== -->
 <div class="section-header">
     <h2><i class="fa fa-filter"></i> Filter Students</h2>
@@ -505,6 +515,7 @@ function build_student_link(int $course_id, int $intake_id, string $search, int 
 
 <form method="get" class="controls-bar">
     <input type="hidden" name="view" value="recommend_certificates">
+    <input type="hidden" name="tab" value="students">
 
     <div class="ctrl-field">
         <label class="ctrl-label"><i class="fa fa-book"></i> Course</label>
@@ -726,6 +737,8 @@ function build_student_link(int $course_id, int $intake_id, string $search, int 
     </div>
 <?php endif; ?>
 
+ </section>
+<section id="panel-activity" class="certificate-tab-panel" role="tabpanel" aria-labelledby="tab-activity" <?= $activeTab !== 'activity' ? 'hidden' : ''; ?>>
 <!-- ===================== CERTIFICATE ACTIVITY ===================== -->
 <div class="section-header">
     <h2><i class="fa fa-eye"></i> Certificate Activity &mdash; Views &amp; Downloads</h2>
@@ -733,6 +746,7 @@ function build_student_link(int $course_id, int $intake_id, string $search, int 
 
 <form method="get" class="controls-bar">
     <input type="hidden" name="view" value="recommend_certificates">
+    <input type="hidden" name="tab" value="activity">
 
     <div class="ctrl-field">
         <label class="ctrl-label"><i class="fa fa-book"></i> Course</label>
@@ -875,6 +889,7 @@ function build_student_link(int $course_id, int $intake_id, string $search, int 
         <?php endif; ?>
     </div>
 <?php endif; ?>
+ </section>
 
 <!-- ===================== CERTIFICATE PREVIEW MODAL ===================== -->
 <div class="modal-overlay" id="certPreviewModal" aria-hidden="true">
@@ -897,6 +912,23 @@ function build_student_link(int $course_id, int $intake_id, string $search, int 
 document.getElementById('checkAll')?.addEventListener('change', function () {
     document.querySelectorAll('input[name="students[]"]').forEach(cb => {
         cb.checked = this.checked;
+    });
+});
+
+document.querySelectorAll('.certificate-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+        const selected = tab.dataset.tab;
+        document.querySelectorAll('.certificate-tab').forEach(button => {
+            const active = button === tab;
+            button.classList.toggle('is-active', active);
+            button.setAttribute('aria-selected', active ? 'true' : 'false');
+        });
+        document.querySelectorAll('.certificate-tab-panel').forEach(panel => {
+            panel.hidden = panel.id !== 'panel-' + selected;
+        });
+        const url = new URL(window.location.href);
+        url.searchParams.set('tab', selected);
+        window.history.replaceState({}, '', url);
     });
 });
 
