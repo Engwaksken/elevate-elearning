@@ -55,8 +55,8 @@ if (!in_array($status, ['all', 'pending', 'submitted', 'graded'], true)) {
     $status = 'all';
 }
 
-$perPage = (int)($_GET['per_page'] ?? 25);
-if (!in_array($perPage, [10,25,50,100], true)) $perPage = 25;
+$perPage = (int)($_GET['per_page'] ?? 10);
+if (!in_array($perPage, [10,25,50], true)) $perPage = 10;
 $page = max(1, (int)($_GET['page_no'] ?? 1));
 
 /* -------------------------------------------------------------
@@ -183,38 +183,38 @@ $fromSql = "
     WHERE {$whereSql}
 ";
 
-/* Count */
-$s = $conn->prepare("SELECT COUNT(*) total {$fromSql}");
+/* Aggregate totals and per-course statistics in one filtered pass. */
+$s = $conn->prepare("
+    SELECT c.id AS course_id, c.name AS course_name,
+           COUNT(*) AS total,
+           SUM(CASE WHEN hi.id IS NULL THEN 1 ELSE 0 END) AS pending,
+           SUM(CASE WHEN hi.id IS NOT NULL AND (hi.finalmarks IS NULL OR hi.finalmarks='') THEN 1 ELSE 0 END) AS submitted,
+           SUM(CASE WHEN hi.id IS NOT NULL AND hi.finalmarks IS NOT NULL AND hi.finalmarks!='' THEN 1 ELSE 0 END) AS graded
+    {$fromSql}
+    GROUP BY c.id, c.name
+");
 if (!$s) {
-    echo '<div class="app-alert app-alert-danger">Unable to load submissions: '.sub_e($conn->error).'</div>';
+    echo '<div class="app-alert app-alert-danger">Unable to load assignment statistics: '.sub_e($conn->error).'</div>';
     return;
 }
 if ($types !== '') $s->bind_param($types, ...$params);
 $s->execute();
-$totalRows = (int)($s->get_result()->fetch_assoc()['total'] ?? 0);
+$courseStats = $s->get_result()->fetch_all(MYSQLI_ASSOC);
 $s->close();
+$totalRows = 0;
+$stats = ['total' => 0, 'pending' => 0, 'submitted' => 0, 'graded' => 0];
+foreach ($courseStats as &$courseStat) {
+    foreach (['total', 'pending', 'submitted', 'graded'] as $metric) {
+        $courseStat[$metric] = (int)$courseStat[$metric];
+        $stats[$metric] += $courseStat[$metric];
+    }
+    $totalRows += $courseStat['total'];
+}
+unset($courseStat);
 
 $totalPages = max(1, (int)ceil($totalRows / $perPage));
 if ($page > $totalPages) $page = $totalPages;
 $offset = ($page - 1) * $perPage;
-
-/* Stats with current filters */
-$statsSql = "
-    SELECT
-        COUNT(*) total,
-        SUM(CASE WHEN hi.id IS NULL THEN 1 ELSE 0 END) pending,
-        SUM(CASE WHEN hi.id IS NOT NULL AND (hi.finalmarks IS NULL OR hi.finalmarks='') THEN 1 ELSE 0 END) submitted,
-        SUM(CASE WHEN hi.id IS NOT NULL AND hi.finalmarks IS NOT NULL AND hi.finalmarks!='' THEN 1 ELSE 0 END) graded
-    {$fromSql}
-";
-$s = $conn->prepare($statsSql);
-$stats = ['total'=>$totalRows,'pending'=>0,'submitted'=>0,'graded'=>0];
-if ($s) {
-    if ($types !== '') $s->bind_param($types, ...$params);
-    $s->execute();
-    $stats = array_merge($stats, $s->get_result()->fetch_assoc() ?: []);
-    $s->close();
-}
 
 /* Data */
 $dataSql = "
@@ -253,6 +253,7 @@ $s->bind_param($dataTypes, ...$dataParams);
 $s->execute();
 $rows = $s->get_result()->fetch_all(MYSQLI_ASSOC);
 $s->close();
+
 ?>
 <!doctype html>
 <html lang="en">
@@ -346,7 +347,7 @@ $s->close();
   <div class="ctrl-field">
     <label class="ctrl-label">Rows</label>
     <select class="ctrl-select" name="per_page">
-      <?php foreach([10,25,50,100] as $n): ?><option value="<?php echo $n; ?>" <?php echo $perPage===$n?'selected':''; ?>><?php echo $n; ?></option><?php endforeach; ?>
+      <?php foreach([10,25,50] as $n): ?><option value="<?php echo $n; ?>" <?php echo $perPage===$n?'selected':''; ?>><?php echo $n; ?></option><?php endforeach; ?>
     </select>
   </div>
 
@@ -362,11 +363,28 @@ $s->close();
 </form>
 
 <div class="stats" style="margin-bottom:24px">
-  <div class="stat-card"><div class="stat-icon total"><i class="fas fa-list"></i></div><div><div class="sv"><?php echo (int)$stats['total']; ?></div><div class="sl">Total</div></div></div>
-  <div class="stat-card"><div class="stat-icon cancel"><i class="fas fa-clock"></i></div><div><div class="sv red"><?php echo (int)$stats['pending']; ?></div><div class="sl">Pending</div></div></div>
-  <div class="stat-card"><div class="stat-icon prog"><i class="fas fa-paper-plane"></i></div><div><div class="sv gold"><?php echo (int)$stats['submitted']; ?></div><div class="sl">Submitted</div></div></div>
-  <div class="stat-card"><div class="stat-icon done"><i class="fas fa-check-circle"></i></div><div><div class="sv green"><?php echo (int)$stats['graded']; ?></div><div class="sl">Graded</div></div></div>
+  <div class="stat-card"><div class="stat-icon total"><i class="fas fa-list"></i></div><div><div class="sv"><?php echo (int)$totalRows; ?></div><div class="sl">Matching records</div></div></div>
+  <div class="stat-card"><div class="stat-icon cancel"><i class="fas fa-clock"></i></div><div><div class="sv red"><?php echo (int)$stats['pending']; ?></div><div class="sl">Pending (filtered)</div></div></div>
+  <div class="stat-card"><div class="stat-icon prog"><i class="fas fa-paper-plane"></i></div><div><div class="sv gold"><?php echo (int)$stats['submitted']; ?></div><div class="sl">Submitted (filtered)</div></div></div>
+  <div class="stat-card"><div class="stat-icon done"><i class="fas fa-check-circle"></i></div><div><div class="sv green"><?php echo (int)$stats['graded']; ?></div><div class="sl">Graded (filtered)</div></div></div>
 </div>
+
+<?php if ($courseStats): ?>
+<div class="course-stat-grid" aria-label="Course statistics for filtered assignments">
+  <?php foreach ($courseStats as $courseStat): ?>
+    <section class="course-stat-card">
+      <h3><?php echo sub_e($courseStat['course']); ?></h3>
+      <div class="course-stat-values">
+        <span><strong><?php echo $courseStat['total']; ?></strong> records</span>
+        <span><strong><?php echo $courseStat['pending']; ?></strong> pending</span>
+        <span><strong><?php echo $courseStat['submitted']; ?></strong> submitted</span>
+        <span><strong><?php echo $courseStat['graded']; ?></strong> graded</span>
+      </div>
+      <small>Counts reflect the current filters.</small>
+    </section>
+  <?php endforeach; ?>
+</div>
+<?php endif; ?>
 
 <div class="tbl-card">
   <div class="tbl-toolbar">

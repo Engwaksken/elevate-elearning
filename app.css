@@ -59,6 +59,12 @@ body { font-family: var(--font-sans); color: var(--text); }
 .certificate-tab:hover { background: var(--surface2); color: var(--maroon); }
 .certificate-tab.is-active { background: var(--maroon); color: #fff; }
 .certificate-tab-panel[hidden] { display: none !important; }
+.course-stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin: -10px 0 24px; }
+.course-stat-card { padding: 15px 17px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-xs); }
+.course-stat-card h3 { margin: 0 0 11px; color: var(--maroon-dk); font-size: 1rem; }
+.course-stat-values { display: flex; flex-wrap: wrap; gap: 7px 14px; color: var(--muted); font-size: .82rem; }
+.course-stat-values strong { color: var(--text); }
+.course-stat-card small { display: block; margin-top: 10px; color: var(--muted); }
 @media (max-width: 767px) {
   .login-logs-page .page-heading h2 { font-size: 22px; }
   .login-logs-page .table { min-width: 760px; }
