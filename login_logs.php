@@ -169,6 +169,9 @@ $stats_sql = "
 
 $stats_result = runQuery($conn, $stats_sql, 's' . $filter_types, array_merge([$today_start], $filter_params));
 $stats = $stats_result ? ($stats_result->fetch_assoc() ?: []) : [];
+if (!$stats_result) {
+    error_log('Login logs summary query could not be loaded: ' . $conn->error);
+}
 
 $total_records = (int)($stats['total'] ?? 0);
 $total_pages = max(1, (int)ceil($total_records / $records_per_page));
@@ -207,6 +210,9 @@ $data_params = array_merge($filter_params, [$records_per_page, $offset]);
 $data_types = $filter_types . 'ii';
 
 $result = $total_records > 0 ? runQuery($conn, $data_sql, $data_types, $data_params) : false;
+if ($total_records > 0 && !$result) {
+    error_log('Login logs records query could not be loaded: ' . $conn->error);
+}
 
 $courses_result = $conn->query("SELECT DISTINCT name FROM courses WHERE name IS NOT NULL AND name != '' ORDER BY name ASC");
 $available_courses = $courses_result ? $courses_result->fetch_all(MYSQLI_ASSOC) : [];

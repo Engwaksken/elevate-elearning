@@ -299,7 +299,7 @@ $s->close();
 </div>
 
 <form method="GET" class="controls-bar filters-grid" style="margin-bottom:22px">
-  <input type="hidden" name="view" value="submissions">
+  <input type="hidden" name="view" value="all_assignments">
 
   <div class="ctrl-field">
     <label class="ctrl-label">Intake</label>
@@ -357,7 +357,7 @@ $s->close();
 
   <div style="display:flex;gap:8px">
     <button class="btn-export" type="submit"><i class="fas fa-filter"></i> Apply</button>
-    <a class="btn-export" href="?view=submissions"><i class="fas fa-rotate-left"></i> Reset</a>
+    <a class="btn-export" href="?view=all_assignments"><i class="fas fa-rotate-left"></i> Reset</a>
   </div>
 </form>
 
